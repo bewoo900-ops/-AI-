@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<title>歡歡專屬｜台股 AI 雷達</title>
+<style>
+:root{--bg:#06101c;--panel:#0b1b2b;--panel2:#0e2337;--line:#1b3a53;--text:#eef8ff;--muted:#8da7bb;--cyan:#24dcff;--blue:#5b83ff;--pink:#ff65bd;--green:#43e3a1;--red:#ff6c7c;--yellow:#ffd76a;--orange:#ffad57}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:radial-gradient(900px 500px at 70% -10%,#163b5b 0%,transparent 65%),linear-gradient(145deg,#040b13,#081727 60%,#06101c);min-height:100vh}
+button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px 18px 60px}.top{display:flex;align-items:center;justify-content:space-between;padding:6px 0 20px}.brand{display:flex;gap:12px;align-items:center;font-weight:900}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#19d8ff,#566fff);box-shadow:0 0 30px #24dcff33}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.8px;margin-top:2px}.status{font-size:11px;color:#91adc2;border:1px solid #24445d;padding:8px 11px;border-radius:99px}.hero{padding:20px 0 18px}.kicker{font-size:13px;color:#65d9ff;margin-bottom:12px}.hero h1{font-size:clamp(38px,6vw,70px);line-height:.95;letter-spacing:-3px;margin:0 0 14px}.hero h1 span{color:var(--cyan)}.hero h1 b{color:var(--pink)}.hero p{color:var(--muted);margin:0;max-width:720px;line-height:1.7}.search{display:flex;gap:9px;margin-top:24px;padding:8px;border:1px solid #1d435d;background:#08192a;border-radius:18px;box-shadow:0 20px 55px #0005}.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#fff;padding:13px 14px;font-size:16px}.search button{border:0;border-radius:13px;padding:0 24px;background:linear-gradient(90deg,#1bdcff,#5c7dff);color:#04101a;font-weight:900;cursor:pointer}.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.chip{cursor:pointer;border:1px solid #1d415a;background:#0b2135;color:#a8c5d9;border-radius:99px;padding:8px 11px;font-size:12px}.settings{display:flex;gap:8px;align-items:center;margin-top:12px}.settings input{width:100%;max-width:390px;border:1px solid #1b3c55;background:#091a2b;color:#a9c2d4;border-radius:10px;padding:9px 11px;font-size:11px}.settings span{font-size:10px;color:#6f8ba0}.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:15px;margin-top:16px}.card{background:linear-gradient(145deg,#0a1a2b,#091726);border:1px solid #17364e;border-radius:20px;padding:18px;box-shadow:0 16px 50px #0003}.head{display:flex;justify-content:space-between;align-items:flex-start}.sym{font-size:12px;color:#63dbff;font-weight:800}.name{font-size:26px;font-weight:900;margin-top:4px}.price{font-size:34px;font-weight:900;margin-top:15px}.up{color:var(--green)}.down{color:var(--red)}.neutral{color:var(--yellow)}.pill{font-size:11px;padding:6px 9px;border-radius:99px;background:#10352e;color:#73efc0;border:1px solid #1d5b4b}.chart{height:270px;margin-top:13px;border-radius:14px;overflow:hidden;background:linear-gradient(#0d2135,#081622);border:1px solid #15344b}.chart svg{width:100%;height:100%}.chartLegend{display:flex;gap:13px;flex-wrap:wrap;color:#7592a7;font-size:10px;margin-top:8px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.sectionTitle{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.sectionTitle h2{font-size:16px;margin:0}.sectionTitle span{font-size:10px;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.metric{padding:13px;border-radius:13px;background:#0c2237;border:1px solid #173d57}.metric small{color:var(--muted);font-size:10px}.metric strong{display:block;margin-top:5px;font-size:18px}.signal{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center}.score{width:108px;height:108px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--cyan) 0deg,var(--blue) var(--deg),#17314a var(--deg) 360deg);position:relative}.score:after{content:"";position:absolute;inset:9px;border-radius:50%;background:#0b1b2b}.score b{position:relative;z-index:1;font-size:25px}.signalText strong{font-size:19px}.signalText p{font-size:12px;color:#a9bfce;line-height:1.65;margin:6px 0 0}.plan{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.level{padding:13px;border-radius:13px;background:#0c2134;border:1px solid #193b54}.level small{display:block;color:var(--muted);font-size:10px}.level b{display:block;font-size:18px;margin-top:6px}.level em{display:block;font-style:normal;font-size:10px;margin-top:4px;color:#8fa9bb}.wide{grid-column:1/-1}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{color:#6f8da2;font-weight:600;text-align:left;padding:7px 4px;border-bottom:1px solid #19364c}.table td{padding:9px 4px;border-bottom:1px solid #132d41}.bar{height:7px;background:#102c43;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#20d9ff,#647dff);border-radius:99px}.ai{background:linear-gradient(145deg,#101d3b,#0d2036);border-color:#29496d}.ai p{color:#c9d9e5;font-size:13px;line-height:1.8;margin:0}.warning{font-size:10px;color:#8da7b9;line-height:1.6;margin-top:12px}.footer{text-align:center;color:#506c81;font-size:10px;margin-top:30px}.loading{opacity:.6;pointer-events:none}.error{color:#ff9aa7;background:#3b1820;border:1px solid #73323f;padding:10px 12px;border-radius:12px;font-size:12px;margin-top:10px;display:none}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.plan{grid-template-columns:1fr}.signal{grid-template-columns:92px 1fr}.score{width:92px;height:92px}.settings{align-items:flex-start;flex-direction:column}.settings input{max-width:none}}
+
+.position-box{margin-top:15px;padding:16px;border-radius:16px;background:linear-gradient(145deg,#0d2438,#0a1a2a);border:1px solid #214a65}
+.position-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+.position-grid label{display:block;color:#88a5b9;font-size:10px;margin-bottom:5px}
+.position-grid input{width:100%;border:1px solid #21445c;background:#071827;color:#fff;border-radius:9px;padding:9px;font-size:13px;outline:none}
+.position-result{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:11px}
+.position-result .metric{background:#0a1d30}
+@media(max-width:850px){.position-grid,.position-result{grid-template-columns:repeat(2,1fr)}}
+
+.scanner{margin-top:16px}.scanner-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.scanner-head p{color:#8da7bb;font-size:12px;line-height:1.6;margin:5px 0 0}.scan-controls{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.scan-controls label{font-size:10px;color:#88a5b9}.scan-controls input,.scan-controls select{width:100%;margin-top:5px;border:1px solid #21445c;background:#071827;color:#fff;border-radius:9px;padding:9px;font-size:12px;outline:none}.scanbtn{border:0;border-radius:11px;background:linear-gradient(90deg,#20d9ff,#5e7eff);font-weight:900;color:#04101a;cursor:pointer;padding:10px 14px;margin-top:17px}.scan-summary{display:flex;gap:8px;flex-wrap:wrap;margin:13px 0}.scan-badge{font-size:11px;padding:7px 10px;border-radius:99px;background:#0d263b;border:1px solid #1c435d;color:#a9c4d7}.scan-table{width:100%;border-collapse:collapse;font-size:12px}.scan-table th{color:#6f8da2;text-align:left;padding:9px 5px;border-bottom:1px solid #19364c}.scan-table td{padding:10px 5px;border-bottom:1px solid #132d41}.scan-table tr:hover{background:#0b2134}.mini-bar{width:90px;height:6px;background:#102c43;border-radius:99px;overflow:hidden}.mini-bar i{display:block;height:100%;background:linear-gradient(90deg,#22d9ff,#627fff)}.scan-note{font-size:10px;color:#6f899c;line-height:1.6;margin-top:10px}.scan-empty{padding:25px;text-align:center;color:#7f99ad;border:1px dashed #21455f;border-radius:12px}
+@media(max-width:850px){.scan-controls{grid-template-columns:repeat(2,1fr)}.scan-table{min-width:720px}.scan-scroll{overflow-x:auto}}
+
+.personal{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.personal .pbox{padding:14px;border-radius:15px;background:linear-gradient(145deg,#0c2236,#091a2a);border:1px solid #1b405a}
+.personal small{color:#7895a9;font-size:10px}.personal b{display:block;font-size:19px;margin-top:5px}
+.navrow{display:flex;gap:8px;overflow:auto;margin-top:10px;padding-bottom:2px}
+.navrow a{text-decoration:none;color:#9bb6c8;border:1px solid #1b405a;background:#0b2135;padding:8px 11px;border-radius:99px;font-size:11px;white-space:nowrap}
+.navrow a:hover{color:#fff;border-color:#2b6a8d}
+@media(max-width:850px){.personal{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">↗</div><div>歡歡的台股 AI 雷達<small>HUANHUAN'S TAIWAN STOCK RADAR</small></div></div>
+    <div style="display:flex;gap:8px;align-items:center"><div class="status">♡ 歡歡專屬</div><div class="status" id="dataStatus">等待分析</div></div>
+  </header>
+
+  <section class="hero">
+    <div class="kicker">♡ 歡歡專屬 · 自動技術分析 · 支撐 / 壓力 / 進場 / 停損 / 目標</div>
+    <h1>歡歡今天<br><span>想看哪支股票</span><b>？</b></h1>
+    <p>輸入台股代號，系統會抓取歷史行情並計算均線、RSI、MACD、ATR、波動率、支撐壓力與風險報酬。結果是「規則化分析」，不是保證漲跌。</p>
+    <div class="search">
+      <input id="stock" value="3105" inputmode="numeric" placeholder="股票代號，例如 2330 / 3105 / 8358">
+      <button id="go">開始分析 ✦</button>
+    </div>
+    <div class="tools">
+      <button class="chip" data-stock="2330">2330 台積電</button>
+      <button class="chip" data-stock="2454">2454 聯發科</button>
+      <button class="chip" data-stock="3105">3105 穩懋</button>
+      <button class="chip" data-stock="8358">8358 金居</button>
+      <button class="chip" data-stock="2317">2317 鴻海</button>
+    </div>
+    
+<div class="personal">
+  <div class="pbox"><small>♡ 我的自選股</small><b id="watchCount">0 檔</b></div>
+  <div class="pbox"><small>🔎 今日掃描</small><b id="scanCount">尚未掃描</b></div>
+  <div class="pbox"><small>🎯 目前分析</small><b id="currentStock">3105</b></div>
+  <div class="pbox"><small>⚖️ 風控上限</small><b id="riskDisplay">2%</b></div>
+</div>
+<div class="navrow">
+  <a href="#dashboard">個股分析</a><a href="#myWatchlist">我的自選</a><a href="#scanner">全市場掃描</a>
+</div>
+
+    <div class="settings">
+      <button class="chip" id="resetRisk" type="button">↺ 重設資金參數</button>
+      <input id="token" type="password" placeholder="可選：FinMind Token（留空先嘗試公開資料）">
+      <span>Token 只會存在這個瀏覽器分頁，不會寫入網站。</span>
+    </div>
+    <div class="error" id="error"></div>
+  </section>
+
+  <div class="grid" id="dashboard">
+    <section class="card">
+      <div class="head">
+        <div><div class="sym" id="sym">3105</div><div class="name" id="name">穩懋</div></div>
+        <div style="display:flex;gap:7px;align-items:center"><button class="chip" id="watchBtn" type="button">＋加入自選</button><div class="pill" id="trendPill">分析中</div></div>
+      </div>
+      <div class="price" id="price">—</div>
+      <div class="chart"><svg id="chart" viewBox="0 0 900 270" preserveAspectRatio="none"></svg></div>
+      <div class="chartLegend">
+        <span><i class="dot" style="background:#29dcff"></i>收盤</span>
+        <span><i class="dot" style="background:#ffd76a"></i>MA20</span>
+        <span><i class="dot" style="background:#ff65bd"></i>MA60</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sectionTitle"><h2>🎯 自動訊號</h2><span>規則引擎</span></div>
+      <div class="signal">
+        <div class="score" id="scoreCircle"><b id="score">—</b></div>
+        <div class="signalText"><strong id="signal">等待資料</strong><p id="signalWhy">抓取資料後，這裡會說明趨勢、動能與位置。</p></div>
+      </div>
+      <div class="warning">分數是模型化的技術條件摘要，不是勝率，也不是投資報酬保證。</div>
+    </section>
+
+    <section class="card">
+      <div class="sectionTitle"><h2>📍 交易計畫</h2><span>依 ATR / 支撐壓力計算</span></div>
+      <div class="plan">
+        <div class="level"><small>觀察／進場區</small><b id="entry">—</b><em id="entryNote">—</em></div>
+        <div class="level"><small>風控停損</small><b class="down" id="stop">—</b><em id="stopNote">—</em></div>
+        <div class="level"><small>第一目標</small><b class="up" id="target1">—</b><em id="target1Note">—</em></div>
+        <div class="level"><small>第二目標</small><b class="up" id="target2">—</b><em id="target2Note">—</em></div>
+        <div class="level"><small>風險 / 報酬</small><b id="rr">—</b><em>以進場中位數估算</em></div>
+        <div class="level"><small>距離前高</small><b id="fromHigh">—</b><em>近 120 交易日</em></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sectionTitle"><h2>📊 技術指標</h2><span>最近交易日</span></div>
+      <div class="metrics">
+        <div class="metric"><small>RSI(14)</small><strong id="rsi">—</strong></div>
+        <div class="metric"><small>MACD</small><strong id="macd">—</strong></div>
+        <div class="metric"><small>MA20</small><strong id="ma20">—</strong></div>
+        <div class="metric"><small>MA60</small><strong id="ma60">—</strong></div>
+        <div class="metric"><small>ATR(14)</small><strong id="atr">—</strong></div>
+        <div class="metric"><small>成交量 / 20日均量</small><strong id="volRatio">—</strong></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sectionTitle"><h2>💵 資金管理</h2><span>依你的風險上限計算</span></div>
+      <div class="position-box">
+        <div class="position-grid">
+          <div><label>投入資金（元）</label><input id="capital" type="number" value="500000" min="0" step="10000"></div>
+          <div><label>單筆最大風險（%）</label><input id="riskPct" type="number" value="2" min="0.1" max="10" step="0.1"></div>
+          <div><label>預計進場價</label><input id="customEntry" type="number" step="0.1" placeholder="自動帶入"></div>
+        </div>
+        <div class="position-result">
+          <div class="metric"><small>建議張數</small><strong id="shares">—</strong></div>
+          <div class="metric"><small>最大可承受損失</small><strong id="maxLoss">—</strong></div>
+          <div class="metric"><small>實際投入金額</small><strong id="usedCapital">—</strong></div>
+          <div class="metric"><small>單張停損風險</small><strong id="riskPerLot">—</strong></div>
+        </div>
+      </div>
+      <div class="warning">這是風險管理計算器，不是自動下單建議；實際成交價、手續費、交易稅與滑價都可能造成差異。</div>
+    </section>
+
+    <section class="card">
+      <div class="sectionTitle"><h2>🧱 支撐與壓力</h2><span>近 60 日</span></div>
+      <table class="table">
+        <tr><th>類型</th><th>價格</th><th>距離</th><th>意義</th></tr>
+        <tr><td>強壓力</td><td id="res2">—</td><td id="res2d">—</td><td>近期高點區</td></tr>
+        <tr><td>壓力</td><td id="res1">—</td><td id="res1d">—</td><td>波段高點</td></tr>
+        <tr><td>現價</td><td id="now">—</td><td>—</td><td>目前位置</td></tr>
+        <tr><td>支撐</td><td id="sup1">—</td><td id="sup1d">—</td><td>MA20 / 低點</td></tr>
+        <tr><td>強支撐</td><td id="sup2">—</td><td id="sup2d">—</td><td>波段低點</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <div class="sectionTitle"><h2>💰 籌碼（可取得時）</h2><span>近 5 日</span></div>
+      <table class="table">
+        <tr><th>項目</th><th>近 5 日淨變化</th><th>方向</th></tr>
+        <tr><td>三大法人</td><td id="inst">—</td><td id="instDir">—</td></tr>
+        <tr><td>融資餘額</td><td id="margin">—</td><td id="marginDir">—</td></tr>
+      </table>
+      <div class="warning">若資料來源限制、代號或 API 權限不允許，籌碼區會顯示「無資料」，技術分析仍可運作。</div>
+    </section>
+
+    <section class="card ai wide">
+      <div class="sectionTitle"><h2>🤖 自動分析摘要</h2><span>由規則引擎生成</span></div>
+      <p id="aiText">輸入股票後開始分析。</p>
+    </section>
+  </div>
+  
+
+<section class="card" id="myWatchlist" style="margin-top:16px">
+  <div class="sectionTitle"><h2>♡ 歡歡自選股</h2><span>儲存在這個瀏覽器</span></div>
+  <div id="watchItems" class="tools"></div>
+  <div class="warning">點擊股票即可進入完整分析。自選股只儲存在目前瀏覽器，不會上傳。</div>
+</section>
+
+<section class="card scanner" id="scanner">
+  <div class="scanner-head">
+    <div>
+      <div class="sectionTitle" style="margin-bottom:2px"><h2>🔎 全台股票掃描器</h2><span>規則化篩選</span></div>
+      <p>從股票池中找出「趨勢、動能、成交量、位置與風險報酬」同時符合條件的標的，再逐支打開完整分析。</p>
+    </div>
+    <button class="scanbtn" id="scanBtn">開始掃描</button>
+  </div>
+  <div class="scan-controls">
+    <div><label>最低技術分數</label><input id="minScore" type="number" value="65" min="0" max="100"></div>
+    <div><label>最低量能倍數</label><input id="minVol" type="number" value="1.1" min="0" step="0.1"></div>
+    <div><label>最低風險報酬 R</label><input id="minRR" type="number" value="1.5" min="0" step="0.1"></div>
+    <div><label>趨勢條件</label><select id="trendFilter"><option value="all">不限</option><option value="bull">MA20 > MA60</option><option value="above20">股價 > MA20</option></select></div>
+  </div>
+  <div class="scan-summary" id="scanSummary">
+    <span class="scan-badge">尚未掃描</span>
+  </div>
+  <div class="scan-scroll">
+    <div id="scanResults" class="scan-empty">按「開始掃描」後，系統會依目前條件分析股票池。</div>
+  </div>
+  <div class="scan-note">掃描結果只是技術條件篩選，不是「必漲名單」。正式版建議再加入上市/上櫃完整股票池、即時行情、法人、融資融券、財報與新聞，並把 API 放到後端避免瀏覽器跨網域限制。</div>
+</section>
+
+  <div class="footer">⚠️ 歡歡專屬分析工具：所有進場、停損、目標與分數都是依歷史資料與規則計算的研究參考，不代表未來報酬或保證獲利。<br>台股雷達 Demo · 歷史資料分析不代表未來走勢 · 上市、上櫃與興櫃資料欄位定義可能不同</div>
+</div>
+
+<script>
+const API='https://api.finmindtrade.com/api/v4/data';
+const names={'2330':'台積電','2454':'聯發科','3105':'穩懋','8358':'金居','2317':'鴻海'};
+const $=id=>document.getElementById(id);
+const fmt=(n,d=2)=>Number.isFinite(n)?n.toFixed(d):'—';
+const pct=(n,d=1)=>Number.isFinite(n)?(n>=0?'+':'')+n.toFixed(d)+'%':'—';
+function avg(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:NaN}
+function sma(a,n){return a.map((_,i)=>i<n-1?NaN:avg(a.slice(i-n+1,i+1)))}
+function ema(a,n){let out=[],k=2/(n+1),e=a[0];a.forEach((v,i)=>{e=i? v*k+e*(1-k):v;out.push(e)});return out}
+function rsi(a,n=14){let g=0,l=0;for(let i=1;i<=n;i++){let d=a[i]-a[i-1];g+=Math.max(d,0);l+=Math.max(-d,0)};let ag=g/n,al=l/n,out=Array(n).fill(NaN);out.push(al===0?100:100-100/(1+ag/al));for(let i=n+1;i<a.length;i++){let d=a[i]-a[i-1];ag=(ag*(n-1)+Math.max(d,0))/n;al=(al*(n-1)+Math.max(-d,0))/n;out.push(al===0?100:100-100/(1+ag/al))}return out}
+function atr(rows,n=14){let tr=rows.map((r,i)=>i?Math.max(r.max-r.min,Math.abs(r.max-rows[i-1].close),Math.abs(r.min-rows[i-1].close)):r.max-r.min);return sma(tr,n)}
+function fmtK(n){return Number.isFinite(n)?(Math.abs(n)>=1000000?(n/1000000).toFixed(2)+'M':Math.abs(n)>=1000?(n/1000).toFixed(1)+'K':Math.round(n).toLocaleString()):'—'}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+async function getData(dataset,id,start,end){
+  const u=new URL(API);u.searchParams.set('dataset',dataset);u.searchParams.set('data_id',id);u.searchParams.set('start_date',start);u.searchParams.set('end_date',end);
+  const token=$('token').value.trim(); const opt=token?{headers:{Authorization:'Bearer '+token}}:{};
+  const r=await fetch(u,opt); if(!r.ok) throw new Error(dataset+' HTTP '+r.status);
+  const j=await r.json(); if(!j.data) throw new Error(dataset+' 無資料');
+  return j.data;
+}
+function datesBack(days){let d=new Date();d.setDate(d.getDate()-days);return d.toISOString().slice(0,10)}
+function drawChart(rows,ma20,ma60){
+  const svg=$('chart'), W=900,H=270,pad=22;
+  const vals=rows.map(r=>r.close), all=vals.concat(ma20.filter(Number.isFinite),ma60.filter(Number.isFinite));
+  let lo=Math.min(...all),hi=Math.max(...all),range=hi-lo||1;lo-=range*.08;hi+=range*.08;
+  const pts=a=>a.map((v,i)=>Number.isFinite(v)?[(i/(a.length-1))*(W-pad*2)+pad,H-pad-((v-lo)/(hi-lo))*(H-pad*2)]:null).filter(Boolean);
+  const line=p=>p.map((x,i)=>(i?'L':'M')+x[0].toFixed(1)+','+x[1].toFixed(1)).join(' ');
+  let out='<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#25dcff" stop-opacity=".28"/><stop offset="1" stop-color="#25dcff" stop-opacity="0"/></linearGradient></defs>';
+  const p=pts(vals);out+='<path d="'+line(p)+' L '+(W-pad)+' '+(H-pad)+' L '+pad+' '+(H-pad)+' Z" fill="url(#g)"/>';
+  out+='<path d="'+line(p)+'" fill="none" stroke="#25dcff" stroke-width="3"/>';
+  out+='<path d="'+line(pts(ma20))+'" fill="none" stroke="#ffd76a" stroke-width="1.7"/>';
+  out+='<path d="'+line(pts(ma60))+'" fill="none" stroke="#ff65bd" stroke-width="1.7"/>';
+  for(let i=0;i<5;i++){let y=pad+i*(H-pad*2)/4;out+='<line x1="0" y1="'+y+'" x2="'+W+'" y2="'+y+'" stroke="#17334a" stroke-width="1"/>'}
+  svg.innerHTML=out;
+}
+function setText(id,v){$(id).textContent=v}
+function distance(cur,x){return pct((x/cur-1)*100)}
+function analyze(rows){
+  rows=rows.filter(r=>Number(r.close)>0).sort((a,b)=>a.date.localeCompare(b.date));
+  const close=rows.map(r=>+r.close), vol=rows.map(r=>+r.Trading_Volume||0);
+  const ma20=sma(close,20),ma60=sma(close,60),r=rsi(close),a=atr(rows);
+  const ema12=ema(close,12),ema26=ema(close,26),macdLine=ema12.map((x,i)=>x-ema26[i]),signal=ema(macdLine,9),macd=macdLine.at(-1)-signal.at(-1);
+  const cur=close.at(-1), prev=close.at(-2), m20=ma20.at(-1),m60=ma60.at(-1),rrsi=r.at(-1),aatr=a.at(-1),v20=avg(vol.slice(-20)),vr=vol.at(-1)/v20;
+  const last60=rows.slice(-60), last120=rows.slice(-120);
+  const highs=last60.map(x=>+x.max),lows=last60.map(x=>+x.min);
+  const res2=Math.max(...highs),res1=Math.max(...highs.slice(0,-5).length?highs.slice(0,-5):highs);
+  const sup2=Math.min(...lows),sup1=Math.max(Math.min(...lows),m20-0.6*aatr);
+  const recentHigh=Math.max(...last120.map(x=>+x.max));
+  const entryLow=Math.max(sup1,cur-0.75*aatr),entryHigh=Math.min(cur+0.15*aatr,res1);
+  const stop=Math.min(sup2,entryLow-1.1*aatr);
+  const target1=res1, target2=Math.max(res2,cur+2.4*aatr);
+  const entry=(entryLow+entryHigh)/2;
+  const risk=Math.max(entry-stop,.01), rr=Math.min((target1-entry)/risk,(target2-entry)/risk);
+  let score=50, reasons=[];
+  if(cur>m20){score+=12;reasons.push('股價站上 MA20')}else{score-=10;reasons.push('股價低於 MA20')}
+  if(m20>m60){score+=12;reasons.push('MA20 位於 MA60 上方')}else{score-=10;reasons.push('MA20 尚未站上 MA60')}
+  if(rrsi>55&&rrsi<72){score+=10;reasons.push('RSI 動能偏多')}else if(rrsi>=72){score-=5;reasons.push('RSI 偏熱')}else{score-=6;reasons.push('RSI 動能偏弱')}
+  if(macd>0){score+=9;reasons.push('MACD 柱體為正')}else{score-=7;reasons.push('MACD 柱體為負')}
+  if(vr>1.2){score+=5;reasons.push('成交量放大')}else if(vr<.7){score-=3;reasons.push('成交量偏低')}
+  score=Math.max(0,Math.min(100,Math.round(score)));
+  let label=score>=75?'偏多觀察':score>=60?'偏多但需確認':score>=45?'震盪觀察':'偏弱觀察';
+  let cls=score>=60?'up':score<45?'down':'neutral';
+  $('scoreCircle').style.setProperty('--deg',(score/100*360)+'deg');setText('score',score);setText('signal',label);$('signal').className=cls;
+  setText('signalWhy',reasons.slice(0,4).join(' · '));
+  setText('sym',rows.at(-1).stock_id);setText('name',names[rows.at(-1).stock_id]||'個股');refreshWatchButton();
+  $('price').innerHTML=fmt(cur)+' <span class="'+(cur>=prev?'up':'down')+'" style="font-size:14px">'+(cur>=prev?'▲ ':'▼ ')+pct((cur/prev-1)*100)+'</span>';
+  $('trendPill').textContent=label;$('trendPill').style.background=score>=60?'#10352e':score<45?'#3b1820':'#3b3313';
+  setText('rsi',fmt(rrsi,1));setText('macd',fmt(macd));setText('ma20',fmt(m20));setText('ma60',fmt(m60));setText('atr',fmt(aatr));setText('volRatio',fmt(vr,2)+'x');
+  setText('entry',fmt(entryLow)+' ~ '+fmt(entryHigh));latestPlan={entry:(entryLow+entryHigh)/2,stop:stop,price:cur};if(!$('customEntry').value)$('customEntry').value=fmt((entryLow+entryHigh)/2);updatePosition();setText('entryNote',entryLow<=cur?'靠近現價／回測區':'等待回落至區間');
+  setText('stop',fmt(stop));setText('stopNote','跌破此區代表原先邏輯失效');
+  setText('target1',fmt(target1));setText('target1Note',distance(cur,target1)+' / 前波壓力');
+  setText('target2',fmt(target2));setText('target2Note',distance(cur,target2)+' / ATR延伸');
+  setText('rr',rr.toFixed(2)+'R');setText('fromHigh',distance(cur,recentHigh));
+  setText('res2',fmt(res2));setText('res2d',distance(cur,res2));setText('res1',fmt(res1));setText('res1d',distance(cur,res1));setText('now',fmt(cur));setText('sup1',fmt(sup1));setText('sup1d',distance(cur,sup1));setText('sup2',fmt(sup2));setText('sup2d',distance(cur,sup2));
+  drawChart(rows.slice(-120),sma(close.slice(-120),20),sma(close.slice(-120),60));
+  const pos=cur>m20&&m20>m60?'多頭排列':cur<m20&&m20<m60?'空頭排列':'整理階段';
+  const rrText=rr>1.5?'風險報酬條件較完整':rr>1?'仍可觀察但空間有限':'目標空間相對有限';
+  setText('aiText',`${rows.at(-1).date} 收盤 ${fmt(cur)}。目前屬「${pos}」，RSI ${fmt(rrsi,1)}、MACD ${fmt(macd)}、成交量約為20日均量 ${fmt(vr,2)} 倍。系統把 ${fmt(entryLow)}～${fmt(entryHigh)} 視為觀察／進場區，${fmt(stop)} 為風控參考，第一目標約 ${fmt(target1)}、第二目標約 ${fmt(target2)}；估算風險報酬約 ${rr.toFixed(2)}R。${rrText}。`);
+  return {rows,cur};
+}
+
+let latestPlan={entry:NaN,stop:NaN,price:NaN};
+function updatePosition(){
+  const capital=+$('capital').value||0, riskPct=+$('riskPct').value||0;
+  const entry=(+$('customEntry').value)||latestPlan.entry;
+  const stop=latestPlan.stop;
+  if(!(capital>0&&riskPct>0&&entry>0&&stop>0&&entry>stop)){
+    setText('shares','—');setText('maxLoss','—');setText('usedCapital','—');setText('riskPerLot','—');return;
+  }
+  const maxLoss=capital*riskPct/100;
+  const riskPerShare=entry-stop;
+  const riskPerLot=riskPerShare*1000;
+  const lots=Math.max(0,Math.floor(maxLoss/riskPerLot));
+  const used=lots*entry*1000;
+  setText('shares',lots+' 張');
+  setText('maxLoss','NT$ '+Math.round(maxLoss).toLocaleString());
+  setText('usedCapital','NT$ '+Math.round(used).toLocaleString());
+  setText('riskPerLot','NT$ '+Math.round(riskPerLot).toLocaleString());
+}
+['capital','riskPct','customEntry'].forEach(id=>$(id).addEventListener('input',()=>{updatePosition();$('riskDisplay').textContent=(+$('riskPct').value||0)+'%'}));$('riskDisplay').textContent=(+$('riskPct').value||2)+'%';
+
+
+const WATCH_KEY='huanhuan_stock_watchlist_v1';
+function getWatch(){try{return JSON.parse(localStorage.getItem(WATCH_KEY)||'[]')}catch(e){return[]}}
+function saveWatch(a){localStorage.setItem(WATCH_KEY,JSON.stringify(a))}
+function renderWatch(){
+  const a=getWatch(), box=$('watchItems'); $('watchCount').textContent=a.length+' 檔';
+  box.innerHTML=a.length?a.map(x=>`<button class="chip" onclick="openFromScan('${x.id}')">${esc(x.id)} ${esc(x.name)} ×</button>`).join(''):'<span style="color:#708ba0;font-size:12px">還沒有自選股，從個股頁按「＋加入自選」。</span>';
+}
+function toggleWatch(){
+  const id=$('sym').textContent, name=$('name').textContent;
+  let a=getWatch(),idx=a.findIndex(x=>x.id===id);
+  if(idx>=0){a.splice(idx,1);$('watchBtn').textContent='＋加入自選'}
+  else{a.unshift({id,name});a=a.slice(0,30);$('watchBtn').textContent='✓ 已加入自選'}
+  saveWatch(a);renderWatch();
+}
+$('watchBtn').addEventListener('click',toggleWatch);
+renderWatch();
+
+function refreshWatchButton(){
+  const id=$('sym').textContent;
+  $('watchBtn').textContent=getWatch().some(x=>x.id===id)?'✓ 已加入自選':'＋加入自選';
+  $('currentStock').textContent=id;
+}
+
+async function loadStock(id){
+  id=id.replace(/\D/g,'').slice(0,6);if(!id)return;
+  $('error').style.display='none';$('dataStatus').textContent='抓取資料…';document.body.classList.add('loading');
+  try{
+    const start=datesBack(260),end=new Date().toISOString().slice(0,10);
+    const price=await getData('TaiwanStockPrice',id,start,end);
+    if(!price.length)throw new Error('找不到這個股票代號的行情資料');
+    analyze(price);
+    // Optional chip datasets; failure does not block technical analysis.
+    try{
+      const inst=await getData('TaiwanStockInstitutionalInvestorsBuySell',id,datesBack(10),end);
+      const net=inst.slice(-5).reduce((s,x)=>s+(+x.buy||0)-(+x.sell||0),0);
+      setText('inst',fmtK(net));setText('instDir',net>0?'偏買超':net<0?'偏賣超':'接近中性');$('instDir').className=net>0?'up':net<0?'down':'neutral';
+    }catch(e){setText('inst','無資料');setText('instDir','—')}
+    try{
+      const mg=await getData('TaiwanStockMarginPurchaseShortSale',id,datesBack(10),end);
+      const first=mg.at(0),last=mg.at(-1),net=(+last.MarginPurchaseTodayBalance||0)-(+first.MarginPurchaseTodayBalance||0);
+      setText('margin',fmtK(net));setText('marginDir',net>0?'融資增加':net<0?'融資減少':'變化不大');$('marginDir').className=net>0?'down':net<0?'up':'neutral';
+    }catch(e){setText('margin','無資料');setText('marginDir','—')}
+    $('dataStatus').textContent='資料更新：API 回傳';
+  }catch(e){
+    $('error').textContent='抓不到資料：'+e.message+'。如果瀏覽器阻擋跨網域請求，請在正式部署時用自己的後端 Proxy；也可以輸入 FinMind Token 再試一次。';
+    $('error').style.display='block';$('dataStatus').textContent='資料取得失敗';
+  }finally{document.body.classList.remove('loading')}
+}
+$('resetRisk').onclick=()=>{$('capital').value=500000;$('riskPct').value=2;$('customEntry').value='';updatePosition()};
+$('go').onclick=()=>loadStock($('stock').value);
+$('stock').addEventListener('keydown',e=>{if(e.key==='Enter')loadStock($('stock').value)});
+document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('stock').value=b.dataset.stock;loadStock(b.dataset.stock)});
+loadStock('3105');
+
+const SCAN_POOL=[
+  ['2330','台積電'],['2454','聯發科'],['2317','鴻海'],['2303','聯電'],
+  ['2382','廣達'],['3231','緯創'],['6669','緯穎'],['2357','華碩'],
+  ['3105','穩懋'],['8358','金居'],['3037','欣興'],['2376','技嘉'],
+  ['2345','智邦'],['3661','世芯-KY'],['3017','奇鋐'],['3324','雙鴻'],
+  ['3443','創意'],['2379','瑞昱'],['3711','日月光投控'],['2308','台達電']
+];
+
+function calcQuick(rows){
+  rows=rows.filter(r=>+r.close>0).sort((a,b)=>a.date.localeCompare(b.date));
+  if(rows.length<65)return null;
+  const c=rows.map(r=>+r.close),v=rows.map(r=>+r.Trading_Volume||0);
+  const m20=sma(c,20).at(-1),m60=sma(c,60).at(-1),cur=c.at(-1);
+  const rs=rsi(c).at(-1),at=atr(rows).at(-1),v20=avg(v.slice(-20)),vr=v.at(-1)/(v20||1);
+  const e12=ema(c,12),e26=ema(c,26),ml=e12.map((x,i)=>x-e26[i]),sg=ema(ml,9),mc=ml.at(-1)-sg.at(-1);
+  const highs=rows.slice(-60).map(r=>+r.max),lows=rows.slice(-60).map(r=>+r.min);
+  const res=Math.max(...highs),sup=Math.min(...lows);
+  const entryLow=Math.max(m20-0.5*at,sup),entryHigh=Math.min(cur+0.1*at,res);
+  const stop=Math.min(sup,entryLow-1.1*at),entry=(entryLow+entryHigh)/2;
+  const target=Math.max(res,cur+2.2*at),risk=Math.max(entry-stop,.01),rr=(target-entry)/risk;
+  let score=50;
+  if(cur>m20)score+=12; else score-=10;
+  if(m20>m60)score+=12; else score-=10;
+  if(rs>55&&rs<72)score+=10; else if(rs>=72)score-=5; else score-=6;
+  if(mc>0)score+=9; else score-=7;
+  if(vr>1.2)score+=5; else if(vr<.7)score-=3;
+  score=Math.max(0,Math.min(100,Math.round(score)));
+  return {cur,m20,m60,rs,vr,mc,rr,score,entry,stop,target};
+}
+
+async function scanAll(){
+  const btn=$('scanBtn'),out=$('scanResults'),sum=$('scanSummary');
+  const minScore=+$('minScore').value||0,minVol=+$('minVol').value||0,minRR=+$('minRR').value||0,tf=$('trendFilter').value;
+  btn.disabled=true;btn.textContent='掃描中…';out.innerHTML='<div class="scan-empty">正在取得資料，請稍候…</div>';
+  let found=[],failed=0;
+  const start=datesBack(260),end=new Date().toISOString().slice(0,10);
+  // Small batches avoid opening too many requests at once.
+  for(let i=0;i<SCAN_POOL.length;i+=4){
+    const batch=SCAN_POOL.slice(i,i+4);
+    const results=await Promise.all(batch.map(async ([id,n])=>{
+      try{
+        const data=await getData('TaiwanStockPrice',id,start,end);
+        const q=calcQuick(data);
+        if(!q)return null;
+        if(q.score<minScore||q.vr<minVol||q.rr<minRR)return null;
+        if(tf==='bull'&&!(q.m20>q.m60))return null;
+        if(tf==='above20'&&!(q.cur>q.m20))return null;
+        return {id,n,...q};
+      }catch(e){failed++;return null}
+    }));
+    found.push(...results.filter(Boolean));
+    sum.innerHTML='<span class="scan-badge">已完成 '+Math.min(i+4,SCAN_POOL.length)+' / '+SCAN_POOL.length+'</span><span class="scan-badge">符合條件 '+found.length+' 檔</span>';
+  }
+  found.sort((a,b)=>b.score-a.score||b.rr-a.rr);
+  if(!found.length){
+    out.innerHTML='<div class="scan-empty">目前沒有符合條件的標的。可以降低最低分數、量能或 R 值再掃描。</div>';
+  }else{
+    out.innerHTML='<table class="scan-table"><thead><tr><th>股票</th><th>分數</th><th>現價</th><th>RSI</th><th>量能</th><th>進場區中位</th><th>停損</th><th>目標</th><th>R</th><th></th></tr></thead><tbody>'+
+      found.map(x=>`<tr>
+        <td><b>${esc(x.id)} ${esc(x.n)}</b></td>
+        <td><b class="${x.score>=70?'up':x.score<50?'down':'neutral'}">${x.score}</b></td>
+        <td>${fmt(x.cur)}</td>
+        <td>${fmt(x.rs,1)}</td>
+        <td>${fmt(x.vr,2)}x</td>
+        <td>${fmt(x.entry)}</td>
+        <td class="down">${fmt(x.stop)}</td>
+        <td class="up">${fmt(x.target)}</td>
+        <td><b>${x.rr.toFixed(2)}R</b></td>
+        <td><button class="chip" onclick="openFromScan('${x.id}')">詳細</button></td>
+      </tr>`).join('')+'</tbody></table>';
+  }
+  sum.innerHTML+=`<span class="scan-badge">API 無法取得：${failed} 檔</span>`;$('scanCount').textContent=found.length+' 檔符合';
+  btn.disabled=false;btn.textContent='重新掃描';
+}
+function openFromScan(id){
+  $('stock').value=id;window.scrollTo({top:0,behavior:'smooth'});loadStock(id);
+}
+$('scanBtn').addEventListener('click',scanAll);
+
+</script>
+</body>
+</html>
