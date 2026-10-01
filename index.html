@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="googlebot" content="noindex, nofollow, noarchive">
+    <meta name="bingbot" content="noindex, nofollow, noarchive">
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07111f">
@@ -8,7 +12,37 @@
 <style>
 :root{--bg:#06101c;--panel:#0b1b2b;--panel2:#0e2337;--line:#1b3a53;--text:#eef8ff;--muted:#8da7bb;--cyan:#24dcff;--blue:#5b83ff;--pink:#ff65bd;--green:#43e3a1;--red:#ff6c7c;--yellow:#ffd76a;--orange:#ffad57}
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:radial-gradient(900px 500px at 70% -10%,#163b5b 0%,transparent 65%),linear-gradient(145deg,#040b13,#081727 60%,#06101c);min-height:100vh}
-button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px 18px 60px}.top{display:flex;align-items:center;justify-content:space-between;padding:6px 0 20px}.brand{display:flex;gap:12px;align-items:center;font-weight:900}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#19d8ff,#566fff);box-shadow:0 0 30px #24dcff33}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.8px;margin-top:2px}.status{font-size:11px;color:#91adc2;border:1px solid #24445d;padding:8px 11px;border-radius:99px}.hero{padding:20px 0 18px}.kicker{font-size:13px;color:#65d9ff;margin-bottom:12px}.hero h1{font-size:clamp(38px,6vw,70px);line-height:.95;letter-spacing:-3px;margin:0 0 14px}.hero h1 span{color:var(--cyan)}.hero h1 b{color:var(--pink)}.hero p{color:var(--muted);margin:0;max-width:720px;line-height:1.7}.search{display:flex;gap:9px;margin-top:24px;padding:8px;border:1px solid #1d435d;background:#08192a;border-radius:18px;box-shadow:0 20px 55px #0005}.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#fff;padding:13px 14px;font-size:16px}.search button{border:0;border-radius:13px;padding:0 24px;background:linear-gradient(90deg,#1bdcff,#5c7dff);color:#04101a;font-weight:900;cursor:pointer}.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.chip{cursor:pointer;border:1px solid #1d415a;background:#0b2135;color:#a8c5d9;border-radius:99px;padding:8px 11px;font-size:12px}.settings{display:flex;gap:8px;align-items:center;margin-top:12px}.settings input{width:100%;max-width:390px;border:1px solid #1b3c55;background:#091a2b;color:#a9c2d4;border-radius:10px;padding:9px 11px;font-size:11px}.settings span{font-size:10px;color:#6f8ba0}.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:15px;margin-top:16px}.card{background:linear-gradient(145deg,#0a1a2b,#091726);border:1px solid #17364e;border-radius:20px;padding:18px;box-shadow:0 16px 50px #0003}.head{display:flex;justify-content:space-between;align-items:flex-start}.sym{font-size:12px;color:#63dbff;font-weight:800}.name{font-size:26px;font-weight:900;margin-top:4px}.price{font-size:34px;font-weight:900;margin-top:15px}.up{color:var(--green)}.down{color:var(--red)}.neutral{color:var(--yellow)}.pill{font-size:11px;padding:6px 9px;border-radius:99px;background:#10352e;color:#73efc0;border:1px solid #1d5b4b}.chart{height:270px;margin-top:13px;border-radius:14px;overflow:hidden;background:linear-gradient(#0d2135,#081622);border:1px solid #15344b}.chart svg{width:100%;height:100%}.chartLegend{display:flex;gap:13px;flex-wrap:wrap;color:#7592a7;font-size:10px;margin-top:8px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.sectionTitle{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.sectionTitle h2{font-size:16px;margin:0}.sectionTitle span{font-size:10px;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.metric{padding:13px;border-radius:13px;background:#0c2237;border:1px solid #173d57}.metric small{color:var(--muted);font-size:10px}.metric strong{display:block;margin-top:5px;font-size:18px}.signal{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center}.score{width:108px;height:108px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--cyan) 0deg,var(--blue) var(--deg),#17314a var(--deg) 360deg);position:relative}.score:after{content:"";position:absolute;inset:9px;border-radius:50%;background:#0b1b2b}.score b{position:relative;z-index:1;font-size:25px}.signalText strong{font-size:19px}.signalText p{font-size:12px;color:#a9bfce;line-height:1.65;margin:6px 0 0}.plan{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.level{padding:13px;border-radius:13px;background:#0c2134;border:1px solid #193b54}.level small{display:block;color:var(--muted);font-size:10px}.level b{display:block;font-size:18px;margin-top:6px}.level em{display:block;font-style:normal;font-size:10px;margin-top:4px;color:#8fa9bb}.wide{grid-column:1/-1}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{color:#6f8da2;font-weight:600;text-align:left;padding:7px 4px;border-bottom:1px solid #19364c}.table td{padding:9px 4px;border-bottom:1px solid #132d41}.bar{height:7px;background:#102c43;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#20d9ff,#647dff);border-radius:99px}.ai{background:linear-gradient(145deg,#101d3b,#0d2036);border-color:#29496d}.ai p{color:#c9d9e5;font-size:13px;line-height:1.8;margin:0}.warning{font-size:10px;color:#8da7b9;line-height:1.6;margin-top:12px}.footer{text-align:center;color:#506c81;font-size:10px;margin-top:30px}.loading{opacity:.6;pointer-events:none}.error{color:#ff9aa7;background:#3b1820;border:1px solid #73323f;padding:10px 12px;border-radius:12px;font-size:12px;margin-top:10px;display:none}
+button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px 18px 60px}.top{display:flex;align-items:center;justify-content:space-between;padding:6px 0 20px}.brand{display:flex;gap:12px;align-items:center;font-weight:900}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#19d8ff,#566fff);box-shadow:0 0 30px #24dcff33}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.8px;margin-top:2px}.status{font-size:11px;color:#91adc2;border:1px solid #24445d;padding:8px 11px;border-radius:99px}.hero{padding:20px 0 18px}.kicker{font-size:13px;color:#65d9ff;margin-bottom:12px}.hero h1{font-size:clamp(38px,6vw,70px);line-height:.95;letter-spacing:-3px;margin:0 0 14px}.hero h1 span{color:var(--cyan)}.hero h1 b{color:var(--pink)}.hero p{color:var(--muted);margin:0;max-width:720px;line-height:1.7}.search{display:flex;gap:9px;margin-top:24px;padding:8px;border:1px solid #1d435d;background:#08192a;border-radius:18px;box-shadow:0 20px 55px #0005}.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#fff;padding:13px 14px;font-size:16px}.search button{border:0;border-radius:13px;padding:0 24px;background:linear-gradient(90deg,#1bdcff,#5c7dff);color:#04101a;font-weight:900;cursor:pointer}.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.chip{cursor:pointer;border:1px solid #1d415a;background:#0b2135;color:#a8c5d9;border-radius:99px;padding:8px 11px;font-size:12px}.settings{display:flex;gap:8px;align-items:center;margin-top:12px}.settings input{width:100%;max-width:390px;border:1px solid #1b3c55;background:#091a2b;color:#a9c2d4;border-radius:10px;padding:9px 11px;font-size:11px}.settings span{font-size:10px;color:#6f8ba0}.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:15px;margin-top:16px}.card{background:linear-gradient(145deg,#0a1a2b,#091726);border:1px solid #17364e;border-radius:20px;padding:18px;box-shadow:0 16px 50px #0003}.head{display:flex;justify-content:space-between;align-items:flex-start}.sym{font-size:12px;color:#63dbff;font-weight:800}.name{font-size:26px;font-weight:900;margin-top:4px}.price{font-size:34px;font-weight:900;margin-top:15px}.up{color:var(--green)}.down{color:var(--red)}.neutral{color:var(--yellow)}.pill{font-size:11px;padding:6px 9px;border-radius:99px;background:#10352e;color:#73efc0;border:1px solid #1d5b4b}.chart{height:270px;margin-top:13px;border-radius:14px;overflow:hidden;background:linear-gradient(#0d2135,#081622);border:1px solid #15344b}.chart svg{width:100%;height:100%}.chartLegend{display:flex;gap:13px;flex-wrap:wrap;color:#7592a7;font-size:10px;margin-top:8px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.sectionTitle{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.sectionTitle h2{font-size:16px;margin:0}.sectionTitle span{font-size:10px;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.metric{padding:13px;border-radius:13px;background:#0c2237;border:1px solid #173d57}.metric small{color:var(--muted);font-size:10px}.metric strong{display:block;margin-top:5px;font-size:18px}.signal{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center}.score{width:108px;height:108px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--cyan) 0deg,var(--blue) var(--deg),#17314a var(--deg) 360deg);position:relative}.score:after{content:"";position:absolute;inset:9px;border-radius:50%;background:#0b1b2b}.score b{position:relative;z-index:1;font-size:25px}.signalText strong{font-size:19px}.signalText p{font-size:12px;color:#a9bfce;line-height:1.65;margin:6px 0 0}.plan{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.level{padding:13px;border-radius:13px;background:#0c2134;border:1px solid #193b54}.level small{display:block;color:var(--muted);font-size:10px}.level b{display:block;font-size:18px;margin-top:6px}.level em{display:block;font-style:normal;font-size:10px;margin-top:4px;color:#8fa9bb}.wide{grid-column:1/-1}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{color:#6f8da2;font-weight:600;text-align:left;padding:7px 4px;border-bottom:1px solid #19364c}.table td{padding:9px 4px;border-bottom:1px solid #132d41}.bar{height:7px;background:#102c43;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#20d9ff,#647dff);border-radius:99px}.ai{background:linear-gradient(145deg,#101d3b,#0d2036);border-color:#29496d}.ai p{color:#c9d9e5;font-size:13px;line-height:1.8;margin:0}.warning{font-size:10px;color:#8da7b9;line-height:1.6;margin-top:12px}
+.inst-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.inst-box{background:#081827;border:1px solid #17364e;border-radius:14px;padding:11px}
+.inst-box small{display:block;color:#7894a9;font-size:10px;margin-bottom:5px}
+.inst-box strong{font-size:17px}
+.inst-box span{display:block;color:#9bb2c3;font-size:10px;margin-top:4px}
+.inst-opinion{margin-top:12px;padding:12px;border-radius:14px;background:linear-gradient(135deg,#101f35,#0b1727);border:1px solid #244764;color:#dbeaf4;font-size:12px;line-height:1.7}
+.fund-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.fund-box{padding:13px;border-radius:13px;background:#0c2237;border:1px solid #173d57}.fund-box small{color:var(--muted);font-size:10px}.fund-box strong{display:block;margin-top:5px;font-size:18px}.fund-sub{font-size:10px;color:#7895a9;margin-top:4px}.fund-trend{margin-top:12px;padding:12px;border-radius:13px;background:#0b1f32;border:1px solid #17384f;color:#a9c2d4;font-size:12px;line-height:1.7}.fund-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}.fund-table th,.fund-table td{padding:8px 5px;border-bottom:1px solid #15344a;text-align:right}.fund-table th:first-child,.fund-table td:first-child{text-align:left}.fund-table th{color:#718da2;font-weight:600}.fund-loading{color:#7895a9} .event-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.event-card{background:#081827;border:1px solid #17364e;border-radius:14px;padding:13px}
+.event-card h3{margin:0 0 8px;font-size:14px}
+.event-card p{margin:5px 0;color:#a9bdcb;font-size:11px;line-height:1.6}
+.event-badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#122b40;color:#71dcff;font-size:10px}
+.event-link{display:inline-block;margin-top:8px;color:#6edcff;text-decoration:none;font-size:11px}
+.event-link:hover{text-decoration:underline}
+.season-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.season-box{padding:10px;border-radius:12px;background:#0a1928;border:1px solid #18374f}
+.season-box small{display:block;color:#7690a2;font-size:9px}.season-box strong{display:block;margin-top:4px;font-size:14px}
+.us-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.us-box{padding:10px;border-radius:12px;background:#0a1928;border:1px solid #18374f}
+.us-box small{display:block;color:#7690a2;font-size:9px}.us-box strong{display:block;margin-top:4px;font-size:15px}
+.us-box span{display:block;margin-top:3px;color:#9bb2c3;font-size:9px}
+.ref-note{font-size:10px;color:#7f99aa;line-height:1.6;margin-top:10px}
+@media(max-width:700px){.event-grid,.season-grid,.us-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.event-grid,.season-grid,.us-grid{grid-template-columns:1fr}}
+
+.inst-opinion b{color:#63dbff}
+@media(max-width:600px){.inst-grid{grid-template-columns:1fr}}
+
+.summary-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin-top:10px}.summary-box{padding:12px;border-radius:13px;background:#0c2237;border:1px solid #173d57}.summary-box small{display:block;color:var(--muted);font-size:10px}.summary-box strong{display:block;margin-top:5px;font-size:17px}.summary-box span{display:block;margin-top:4px;color:#7895a9;font-size:9px}.summary-text{margin-top:12px;padding:13px;border-radius:14px;background:linear-gradient(135deg,#101f35,#0b1727);border:1px solid #244764;color:#dbeaf4;font-size:12px;line-height:1.75}.summary-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.summary-tag{font-size:10px;padding:5px 8px;border-radius:999px;background:#102b40;border:1px solid #1e4964;color:#9fdcf1}@media(max-width:850px){.summary-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:480px){.summary-grid{grid-template-columns:repeat(2,1fr)}}
+
+.footer{text-align:center;color:#506c81;font-size:10px;margin-top:30px}.loading{opacity:.6;pointer-events:none}.error{color:#ff9aa7;background:#3b1820;border:1px solid #73323f;padding:10px 12px;border-radius:12px;font-size:12px;margin-top:10px;display:none}
 @media(max-width:850px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.plan{grid-template-columns:1fr}.signal{grid-template-columns:92px 1fr}.score{width:92px;height:92px}.settings{align-items:flex-start;flex-direction:column}.settings input{max-width:none}}
 
 .position-box{margin-top:15px;padding:16px;border-radius:16px;background:linear-gradient(145deg,#0d2438,#0a1a2a);border:1px solid #214a65}
@@ -30,6 +64,79 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 .navrow a:hover{color:#fff;border-color:#2b6a8d}
 @media(max-width:850px){.personal{grid-template-columns:repeat(2,1fr)}}
 </style>
+
+<style id="desktop-dashboard-layout">
+/* Desktop dashboard: reduce vertical scrolling while preserving all information. */
+@media (min-width: 1000px) {
+  .container, .wrap, main {
+    max-width: 1440px !important;
+  }
+
+  /* Common section wrappers become compact cards when they are direct children. */
+  .dashboard-grid {
+    display: grid !important;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 14px;
+    align-items: start;
+  }
+
+  .dashboard-grid > * {
+    min-width: 0;
+  }
+
+  .dashboard-grid .span-12 { grid-column: span 12; }
+  .dashboard-grid .span-8 { grid-column: span 8; }
+  .dashboard-grid .span-6 { grid-column: span 6; }
+  .dashboard-grid .span-4 { grid-column: span 4; }
+
+  /* Existing card-like grids become denser on wide screens. */
+  .event-grid, .season-grid, .us-grid {
+    gap: 10px !important;
+  }
+
+  .event-card, .season-box, .us-box {
+    padding: 12px !important;
+  }
+
+  /* Keep long text from making each card excessively tall. */
+  .ref-note {
+    line-height: 1.45 !important;
+  }
+
+  /* Compact vertical spacing between major sections. */
+  section {
+    margin-top: 14px !important;
+    margin-bottom: 14px !important;
+  }
+
+  /* Tables stay readable without forcing a tall page. */
+  table {
+    font-size: 13px;
+  }
+
+  th, td {
+    padding: 7px 8px !important;
+  }
+
+  /* Make the main overview visually prominent but compact. */
+  .overview-card, .summary-card {
+    min-height: 0 !important;
+  }
+
+  /* Allow wide technical/financial panels to sit side-by-side. */
+  .panel-grid, .cards-grid, .metric-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  /* Existing 2-column layouts get more breathing room on desktop. */
+  .two-col, .two-column {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="wrap">
@@ -85,6 +192,21 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
         <span><i class="dot" style="background:#ffd76a"></i>MA20</span>
         <span><i class="dot" style="background:#ff65bd"></i>MA60</span>
       </div>
+    </section>
+
+    <section class="card wide" id="stockSummary">
+      <div class="sectionTitle"><h2>🧭 個股完整資訊總覽</h2><span id="summaryDate">等待資料</span></div>
+      <div class="summary-grid">
+        <div class="summary-box"><small>代號／公司</small><strong id="sumCompany">—</strong><span id="sumIndustry">台股個股</span></div>
+        <div class="summary-box"><small>最新股價</small><strong id="sumPrice">—</strong><span id="sumChange">—</span></div>
+        <div class="summary-box"><small>技術結構</small><strong id="sumTrend">—</strong><span id="sumScore">技術分數 —</span></div>
+        <div class="summary-box"><small>月營收 YoY</small><strong id="sumRevenue">—</strong><span id="sumRevenueDate">—</span></div>
+        <div class="summary-box"><small>EPS</small><strong id="sumEPS">—</strong><span id="sumEPSDate">—</span></div>
+        <div class="summary-box"><small>法人 5 日</small><strong id="sumInst">—</strong><span>外資＋投信＋自營</span></div>
+      </div>
+      <div class="summary-tags" id="summaryTags"><span class="summary-tag">等待資料</span></div>
+      <div class="summary-text" id="summaryText">輸入股票代號後，這裡會把基本面、籌碼面與技術面濃縮成一頁摘要。</div>
+      <div class="warning">這是研究資訊總覽，不是投資建議；不同資料集的公告時間可能不同，重要資訊請以 TWSE／MOPS／公司公告為準。</div>
     </section>
 
     <section class="card">
@@ -160,6 +282,104 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
       <div class="warning">若資料來源限制、代號或 API 權限不允許，籌碼區會顯示「無資料」，技術分析仍可運作。</div>
     </section>
 
+    <section class="card wide" id="fundamentals">
+      <div class="sectionTitle"><h2>📊 基本面總覽</h2><span id="fundDate">等待資料</span></div>
+      <div class="fund-grid">
+        <div class="fund-box"><small>月營收 YoY</small><strong id="fundRevenueYoY">—</strong><div class="fund-sub" id="fundRevenue">最新月營收：—</div></div>
+        <div class="fund-box"><small>EPS</small><strong id="fundEPS">—</strong><div class="fund-sub" id="fundEPSDate">最新季度</div></div>
+        <div class="fund-box"><small>毛利率</small><strong id="fundGrossMargin">—</strong><div class="fund-sub">最新季度</div></div>
+        <div class="fund-box"><small>營益率</small><strong id="fundOperatingMargin">—</strong><div class="fund-sub">最新季度</div></div>
+        <div class="fund-box"><small>ROE</small><strong id="fundROE">—</strong><div class="fund-sub">最新可得</div></div>
+        <div class="fund-box"><small>本益比 P/E</small><strong id="fundPER">—</strong><div class="fund-sub" id="fundPERDate">—</div></div>
+        <div class="fund-box"><small>股價淨值比 P/B</small><strong id="fundPBR">—</strong><div class="fund-sub">估值參考</div></div>
+        <div class="fund-box"><small>殖利率</small><strong id="fundYield">—</strong><div class="fund-sub">估值參考</div></div>
+      </div>
+      <div class="fund-trend" id="fundOpinion">正在取得基本面資料…</div>
+      <table class="fund-table"><thead><tr><th>季度</th><th>EPS</th><th>營收</th><th>毛利率</th><th>營益率</th></tr></thead><tbody id="fundQuarterRows"><tr><td colspan="5" class="fund-loading">等待資料</td></tr></tbody></table>
+      <div class="warning">基本面資料以公開財務資料為主；不同公司財報欄位、公告時間與資料更新速度可能不同。估值指標僅供研究參考，不代表買賣建議。</div>
+    </section>
+
+    <section class="card">
+      <div class="sectionTitle"><h2>🏦 法人動向</h2><span>5 日／20 日</span></div>
+      <div class="inst-grid">
+        <div class="inst-box">
+          <small>外資</small>
+          <strong id="foreign5">—</strong>
+          <span id="foreign20">20日：—</span>
+        </div>
+        <div class="inst-box">
+          <small>投信</small>
+          <strong id="trust5">—</strong>
+          <span id="trust20">20日：—</span>
+        </div>
+        <div class="inst-box">
+          <small>自營商</small>
+          <strong id="dealer5">—</strong>
+          <span id="dealer20">20日：—</span>
+        </div>
+      </div>
+      <div class="inst-opinion">
+        <b>法人觀察：</b><span id="instOpinion">等待法人資料。</span>
+      </div>
+      <div class="warning">這裡是依公開法人買賣超資料產生的「動向解讀」，不是券商研究報告、目標價或法人內部看法；法人資料也可能在公布後微調。</div>
+    </section>
+
+
+    <section class="card">
+      <div class="sectionTitle"><h2>📅 季底／月底作帳觀察</h2><span>季節性參考</span></div>
+      <div class="season-grid">
+        <div class="season-box"><small>本季季底</small><strong id="quarterEnd">—</strong></div>
+        <div class="season-box"><small>季底前5交易日</small><strong id="quarterWindow">—</strong></div>
+        <div class="season-box"><small>年度最後交易日</small><strong id="yearEnd">—</strong></div>
+        <div class="season-box"><small>目前位置</small><strong id="seasonStatus">—</strong></div>
+      </div>
+      <div class="inst-opinion"><b>怎麼看：</b><span id="seasonOpinion">季底／月底作帳屬市場季節性現象，不代表特定股票一定上漲或下跌。可搭配法人、成交量、價格趨勢一起觀察。</span></div>
+      <div class="ref-note">「作帳」不是保證行情；這裡只把季底、月底等時間節點標出來，避免把季節性直接當成交易訊號。</div>
+    </section>
+
+    <section class="card">
+      <div class="sectionTitle"><h2>🎤 法說會／公司事件</h2><span>官方資料入口</span></div>
+      <div class="event-grid">
+        <div class="event-card">
+          <span class="event-badge">TWSE</span>
+          <h3 id="eventCompany">目前查詢股票</h3>
+          <p>上市公司法人說明會、場次與直播資訊可由證交所官方活動頁查詢。</p>
+          <a class="event-link" href="https://www.twse.com.tw/zh/news/eventList" target="_blank" rel="noopener">查看 TWSE 法說會行事曆 ↗</a>
+        </div>
+        <div class="event-card">
+          <span class="event-badge">MOPS</span>
+          <h3>公開資訊觀測站</h3>
+          <p>可進一步查看公司重大訊息、財報、每月營收與法人說明會資料。</p>
+          <a class="event-link" href="https://mops.twse.com.tw/mops/web/" target="_blank" rel="noopener">查看 MOPS ↗</a>
+        </div>
+      </div>
+      <div class="ref-note">法說會日期與內容以公司及 TWSE／MOPS 公告為準；網站不把法說會內容自動解讀成「利多」或「利空」。</div>
+    </section>
+
+    <section class="card">
+      <div class="sectionTitle"><h2>🇺🇸 美股／海外市場參考</h2><span>聯動觀察</span></div>
+      <div class="us-grid">
+        <div class="us-box"><small>S&P 500</small><strong id="usSP">—</strong><span>^GSPC</span></div>
+        <div class="us-box"><small>NASDAQ</small><strong id="usND">—</strong><span>^IXIC</span></div>
+        <div class="us-box"><small>Dow Jones</small><strong id="usDJ">—</strong><span>^DJI</span></div>
+        <div class="us-box"><small>VIX</small><strong id="usVIX">—</strong><span>^VIX</span></div>
+      </div>
+      <div class="inst-opinion"><b>海外參考：</b><span id="usOpinion">讀取美股資料中；若瀏覽器或資料來源限制，仍可使用下面官方／市場頁面查詢。</span></div>
+      <div class="event-grid" style="margin-top:10px">
+        <div class="event-card">
+          <h3>美股指數</h3>
+          <p>S&P 500、Nasdaq、Dow Jones 與 VIX 可作為隔日台股風險情緒的背景參考。</p>
+          <a class="event-link" href="https://finance.yahoo.com/markets/indices/" target="_blank" rel="noopener">查看 Yahoo Finance 指數 ↗</a>
+        </div>
+        <div class="event-card">
+          <h3>半導體／科技</h3>
+          <p>若查詢的是電子、AI、半導體股，可同步留意 Nasdaq、SOX／半導體類股與大型科技股表現。</p>
+          <a class="event-link" href="https://finance.yahoo.com/markets/stocks/" target="_blank" rel="noopener">查看美股市場 ↗</a>
+        </div>
+      </div>
+      <div class="ref-note">海外市場只作背景參考，不直接等同台股隔日走勢。</div>
+    </section>
+
     <section class="card ai wide">
       <div class="sectionTitle"><h2>🤖 自動分析摘要</h2><span>由規則引擎生成</span></div>
       <p id="aiText">輸入股票後開始分析。</p>
@@ -193,7 +413,7 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
   <div class="scan-scroll">
     <div id="scanResults" class="scan-empty">按「開始掃描」後，系統會依目前條件分析股票池。</div>
   </div>
-  <div class="scan-note">掃描結果只是技術條件篩選，不是「必漲名單」。正式版建議再加入上市/上櫃完整股票池、即時行情、法人、融資融券、財報與新聞，並把 API 放到後端避免瀏覽器跨網域限制。</div>
+  <div class="scan-note">掃描結果只是技術條件篩選，不是「必漲名單」。全市場掃描器目前仍使用內建股票池；個股查詢則可直接輸入代號。法人區會另外呈現外資、投信與自營商的近期買賣動向，並把 API 放到後端避免瀏覽器跨網域限制。</div>
 </section>
 
   <div class="footer">⚠️ 歡歡專屬分析工具：所有進場、停損、目標與分數都是依歷史資料與規則計算的研究參考，不代表未來報酬或保證獲利。<br>台股雷達 Demo · 歷史資料分析不代表未來走勢 · 上市、上櫃與興櫃資料欄位定義可能不同</div>
@@ -221,6 +441,113 @@ async function getData(dataset,id,start,end){
   return j.data;
 }
 function datesBack(days){let d=new Date();d.setDate(d.getDate()-days);return d.toISOString().slice(0,10)}
+function nextQuarterEnd(d){
+  const y=d.getFullYear(), m=d.getMonth();
+  const qm=Math.floor(m/3)*3+2;
+  return new Date(y,qm+1,0);
+}
+function fmtDate(d){return d.toISOString().slice(0,10)}
+function updateSeasonality(){
+  const now=new Date(), qEnd=nextQuarterEnd(now);
+  const prevYear=new Date(now.getFullYear(),11,31);
+  setText('quarterEnd',fmtDate(qEnd));
+  const wStart=new Date(qEnd); wStart.setDate(wStart.getDate()-7);
+  setText('quarterWindow',fmtDate(wStart)+'～'+fmtDate(qEnd));
+  setText('yearEnd',fmtDate(prevYear));
+  const days=Math.ceil((qEnd-now)/86400000);
+  if(days<0) setText('seasonStatus','已過季底');
+  else if(days<=10) setText('seasonStatus','接近季底');
+  else if(now.getMonth()%3===2) setText('seasonStatus','本季末');
+  else setText('seasonStatus','一般期間');
+  const op=days>=0&&days<=15
+    ? '目前接近季底，可把法人動向、成交量與趨勢一起列入觀察；不要只因「作帳」兩字就視為買進訊號。'
+    : '目前距離季底仍有一段時間，季底作帳因素的參考權重可先放低，優先看基本面、法人與技術結構。';
+  setText('seasonOpinion',op);
+}
+function updateEventCompany(id){
+  setText('eventCompany','股票 '+id+'｜法說會／公司事件');
+}
+async function fetchUSQuote(symbol){
+  const url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(symbol)+'?range=5d&interval=1d';
+  const r=await fetch(url);
+  if(!r.ok) throw new Error('US quote '+r.status);
+  const j=await r.json();
+  const m=j.chart.result?.[0]?.meta||{};
+  const q=m.regularMarketPrice, prev=m.chartPreviousClose||m.previousClose;
+  return {price:q,chg:prev?((q-prev)/prev*100):null};
+}
+function usText(x){
+  if(!x||x.price==null) return '—';
+  return x.price.toLocaleString('en-US',{maximumFractionDigits:2})+(x.chg==null?'':(' '+(x.chg>=0?'+':'')+x.chg.toFixed(2)+'%'));
+}
+async function updateUSMarket(){
+  const map=[['usSP','^GSPC'],['usND','^IXIC'],['usDJ','^DJI'],['usVIX','^VIX']];
+  try{
+    const vals=await Promise.all(map.map(x=>fetchUSQuote(x[1])));
+    vals.forEach((v,i)=>setText(map[i][0],usText(v)));
+    const vix=vals[3]?.price;
+    setText('usOpinion',vix!=null?(vix>=25?'VIX 偏高，台股風險情緒可多留意波動。':vix>=20?'VIX 位於偏高區間，留意盤勢波動。':'VIX 相對平穩，可再搭配 Nasdaq／半導體表現觀察。'):'美股資料已載入。');
+  }catch(e){
+    setText('usOpinion','目前瀏覽器無法直接取得美股即時資料；請使用下方市場連結查看最新數字。');
+  }
+}
+
+
+function fmtSignedK(n){
+  const sign=n>0?'+':n<0?'−':'';
+  const abs=Math.abs(n);
+  return sign+fmtK(abs);
+}
+function setInstBox(id5,id20,net5,net20){
+  const cls5=net5>0?'up':net5<0?'down':'neutral';
+  const el5=$(id5); el5.textContent=fmtSignedK(net5); el5.className=cls5;
+  $(id20).textContent='20日：'+fmtSignedK(net20);
+}
+function sumInst(rows,name,days){
+  const r=rows.filter(x=>x.name===name).slice(-days);
+  return r.reduce((s,x)=>s+(+x.buy||0)-(+x.sell||0),0);
+}
+function consecutiveDirection(rows,name){
+  const r=rows.filter(x=>x.name===name).sort((a,b)=>a.date.localeCompare(b.date));
+  let n=0,last=0;
+  for(let i=r.length-1;i>=0;i--){
+    const net=(+r[i].buy||0)-(+r[i].sell||0);
+    const dir=net>0?1:net<0?-1:0;
+    if(!dir) break;
+    if(!last) last=dir;
+    if(dir!==last) break;
+    n++;
+  }
+  return {dir:last,days:n};
+}
+function updateInstitutionalView(inst){
+  const foreign5=sumInst(inst,'Foreign_Investor',5), foreign20=sumInst(inst,'Foreign_Investor',20);
+  const trust5=sumInst(inst,'Investment_Trust',5), trust20=sumInst(inst,'Investment_Trust',20);
+  const dealer5=sumInst(inst,'Dealer_self',5)+sumInst(inst,'Dealer_Hedging',5);
+  const dealer20=sumInst(inst,'Dealer_self',20)+sumInst(inst,'Dealer_Hedging',20);
+  setInstBox('foreign5','foreign20',foreign5,foreign20);
+  setInstBox('trust5','trust20',trust5,trust20);
+  setInstBox('dealer5','dealer20',dealer5,dealer20);
+
+  const total5=foreign5+trust5+dealer5;
+  const parts=[
+    ['外資',foreign5,consecutiveDirection(inst,'Foreign_Investor')],
+    ['投信',trust5,consecutiveDirection(inst,'Investment_Trust')],
+    ['自營商',dealer5,{dir:dealer5>0?1:dealer5<0?-1:0,days:0}]
+  ];
+  const pos=parts.filter(x=>x[1]>0).length, neg=parts.filter(x=>x[1]<0).length;
+  let text='';
+  if(pos===3) text='近5日外資、投信、自營商同步偏買，法人籌碼呈現「同步偏多」結構。';
+  else if(neg===3) text='近5日三類法人同步偏賣，法人籌碼呈現「同步偏空」結構。';
+  else if(pos>neg) text='近5日買超法人數多於賣超法人，法人動向略偏正向，但仍要觀察是否延續。';
+  else if(neg>pos) text='近5日賣超法人數多於買超法人，法人動向略偏保守，留意賣壓是否延續。';
+  else text='近5日法人買賣方向分歧，暫以「法人看法分歧」看待。';
+  if(Math.abs(total5)>0) text += ' 三大法人合計近5日約 '+fmtSignedK(total5)+'。';
+  const f=parts[0][2],t=parts[1][2];
+  if(f.days>=3) text += ' 外資已連續'+f.days+'日'+(f.dir>0?'買超。':'賣超。');
+  if(t.days>=3) text += ' 投信已連續'+t.days+'日'+(t.dir>0?'買超。':'賣超。');
+  $('instOpinion').textContent=text;
+}
 function drawChart(rows,ma20,ma60){
   const svg=$('chart'), W=900,H=270,pad=22;
   const vals=rows.map(r=>r.close), all=vals.concat(ma20.filter(Number.isFinite),ma60.filter(Number.isFinite));
@@ -237,6 +564,19 @@ function drawChart(rows,ma20,ma60){
 }
 function setText(id,v){$(id).textContent=v}
 function distance(cur,x){return pct((x/cur-1)*100)}
+function updateSummaryBase(rows,cur,prev,pos,score,label){
+  const id=rows.at(-1)?.stock_id||$('sym').textContent;
+  const name=names[id]||('台股 '+id);
+  setText('sumCompany',id+' '+name);
+  setText('sumPrice',fmt(cur));
+  setText('sumChange',(cur>=prev?'▲ ':'▼ ')+pct((cur/prev-1)*100));
+  $('sumChange').className=cur>=prev?'up':'down';
+  setText('sumTrend',pos);setText('sumScore','技術分數 '+score+' · '+label);
+  setText('summaryDate','行情：'+(rows.at(-1)?.date||'—'));
+  setText('summaryText',`目前股價 ${fmt(cur)}，技術結構為「${pos}」，規則分數 ${score}。這一頁會再結合基本面、法人與事件資料，讓你從同一個畫面檢查不同面向；分數與文字僅是條件整理，不代表未來報酬。`);
+}
+function addSummaryTag(text){const box=$('summaryTags'); if(box.innerText.trim()==='等待資料')box.innerHTML=''; if(text&&![...box.children].some(x=>x.textContent===text)){const s=document.createElement('span');s.className='summary-tag';s.textContent=text;box.appendChild(s)}}
+
 function analyze(rows){
   rows=rows.filter(r=>Number(r.close)>0).sort((a,b)=>a.date.localeCompare(b.date));
   const close=rows.map(r=>+r.close), vol=rows.map(r=>+r.Trading_Volume||0);
@@ -264,7 +604,7 @@ function analyze(rows){
   let cls=score>=60?'up':score<45?'down':'neutral';
   $('scoreCircle').style.setProperty('--deg',(score/100*360)+'deg');setText('score',score);setText('signal',label);$('signal').className=cls;
   setText('signalWhy',reasons.slice(0,4).join(' · '));
-  setText('sym',rows.at(-1).stock_id);setText('name',names[rows.at(-1).stock_id]||'個股');refreshWatchButton();
+  setText('sym',rows.at(-1).stock_id);setText('name',names[rows.at(-1).stock_id]||('台股 '+rows.at(-1).stock_id));refreshWatchButton();
   $('price').innerHTML=fmt(cur)+' <span class="'+(cur>=prev?'up':'down')+'" style="font-size:14px">'+(cur>=prev?'▲ ':'▼ ')+pct((cur/prev-1)*100)+'</span>';
   $('trendPill').textContent=label;$('trendPill').style.background=score>=60?'#10352e':score<45?'#3b1820':'#3b3313';
   setText('rsi',fmt(rrsi,1));setText('macd',fmt(macd));setText('ma20',fmt(m20));setText('ma60',fmt(m60));setText('atr',fmt(aatr));setText('volRatio',fmt(vr,2)+'x');
@@ -278,6 +618,8 @@ function analyze(rows){
   const pos=cur>m20&&m20>m60?'多頭排列':cur<m20&&m20<m60?'空頭排列':'整理階段';
   const rrText=rr>1.5?'風險報酬條件較完整':rr>1?'仍可觀察但空間有限':'目標空間相對有限';
   setText('aiText',`${rows.at(-1).date} 收盤 ${fmt(cur)}。目前屬「${pos}」，RSI ${fmt(rrsi,1)}、MACD ${fmt(macd)}、成交量約為20日均量 ${fmt(vr,2)} 倍。系統把 ${fmt(entryLow)}～${fmt(entryHigh)} 視為觀察／進場區，${fmt(stop)} 為風控參考，第一目標約 ${fmt(target1)}、第二目標約 ${fmt(target2)}；估算風險報酬約 ${rr.toFixed(2)}R。${rrText}。`);
+  updateSummaryBase(rows,cur,prev,pos,score,label);
+  $('summaryTags').innerHTML=''; addSummaryTag(pos); addSummaryTag('RSI '+fmt(rrsi,1)); addSummaryTag('成交量 '+fmt(vr,2)+'x 20日均量');
   return {rows,cur};
 }
 
@@ -325,6 +667,61 @@ function refreshWatchButton(){
   $('currentStock').textContent=id;
 }
 
+function setFund(id,v,cls){const el=$(id);el.textContent=v;el.className=cls||''}
+function numField(o,keys){for(const k of keys){if(o&&o[k]!==undefined&&o[k]!==null&&o[k]!==''){const n=Number(o[k]);if(Number.isFinite(n))return n}}return NaN}
+function normType(x){return String(x||'').toLowerCase().replace(/[\s_\-]/g,'')}
+function pickType(rows,patterns){return rows.filter(r=>{const t=normType(r.type||r.Type||r.name||r.Name||r.item||r.Item);return patterns.some(p=>t.includes(p))})}
+function latestByDate(rows){return [...rows].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))).at(-1)}
+function fmtFundMoney(n){if(!Number.isFinite(n))return '—';if(Math.abs(n)>=1e12)return (n/1e12).toFixed(2)+'兆';if(Math.abs(n)>=1e8)return (n/1e8).toFixed(2)+'億';if(Math.abs(n)>=1e4)return (n/1e4).toFixed(1)+'萬';return Math.round(n).toLocaleString()}
+function findRevenueValue(r){return numField(r,['revenue','Revenue','revenue_amount','RevenueAmount'])}
+function findRevenueYoY(r){return numField(r,['revenue_year_growth','revenue_yoy','revenue_month_yoy','RevenueYoY','revenue_year_on_year'])}
+function financialValue(rows,patterns){const x=latestByDate(pickType(rows,patterns));return {value:numField(x,['value','Value','amount','Amount']),date:x?.date||''}}
+function pctValue(v){return Number.isFinite(v)?(v> -1 && v<1 ? v*100 : v):NaN}
+function marginFrom(fin, profitPatterns, revenuePatterns){const p=financialValue(fin,profitPatterns).value,r=financialValue(fin,revenuePatterns).value;return r? p/r*100:NaN}
+function renderQuarterTable(fin){
+  const dates=[...new Set(fin.map(x=>x.date).filter(Boolean))].sort().slice(-4).reverse();
+  const epsRows=pickType(fin,['eps']); const revRows=pickType(fin,['revenue','營業收入']); const gpRows=pickType(fin,['grossprofit','毛利']); const opRows=pickType(fin,['operatingincome','operatingprofit','營業利益']);
+  const body=$('fundQuarterRows');
+  if(!dates.length){body.innerHTML='<tr><td colspan="5">暫無季度財務資料</td></tr>';return}
+  body.innerHTML=dates.map(d=>{const at=rows=>latestByDate(rows.filter(x=>x.date===d));const e=numField(at(epsRows),['value','Value']);const rv=numField(at(revRows),['value','Value']);const gp=numField(at(gpRows),['value','Value']);const op=numField(at(opRows),['value','Value']);return `<tr><td>${esc(d)}</td><td>${fmt(e)}</td><td>${fmtFundMoney(rv)}</td><td>${Number.isFinite(rv)&&Number.isFinite(gp)?fmt(gp/rv*100,1)+'%':'—'}</td><td>${Number.isFinite(rv)&&Number.isFinite(op)?fmt(op/rv*100,1)+'%':'—'}</td></tr>`}).join('');
+}
+async function updateFundamentals(id,end){
+  ['fundRevenueYoY','fundEPS','fundGrossMargin','fundOperatingMargin','fundROE','fundPER','fundPBR','fundYield'].forEach(x=>setFund(x,'讀取中…','fund-loading'));
+  setText('fundOpinion','正在取得營收、財報與估值資料…');
+  try{
+    const start=datesBack(500);
+    const [fin,rev,per]=await Promise.all([
+      getData('TaiwanStockFinancialStatements',id,start,end),
+      getData('TaiwanStockMonthRevenue',id,datesBack(420),end),
+      getData('TaiwanStockPER',id,datesBack(120),end)
+    ]);
+    const lr=latestByDate(rev), lp=latestByDate(per);
+    const eps=financialValue(fin,['eps']).value;
+    const gross=marginFrom(fin,['grossprofit','毛利'],['revenue','營業收入']);
+    const op=marginFrom(fin,['operatingincome','operatingprofit','營業利益'],['revenue','營業收入']);
+    let roe=financialValue(fin,['roe','權益報酬率']).value; roe=pctValue(roe);
+    const yoy=findRevenueYoY(lr); const revenue=findRevenueValue(lr);
+    const pe=numField(lp,['PER','per']); const pbr=numField(lp,['PBR','pbr']); const dy=numField(lp,['dividend_yield','DividendYield','dividendYield']);
+    setFund('fundRevenueYoY',Number.isFinite(yoy)?pct(yoy):'—',Number.isFinite(yoy)?(yoy>=0?'up':'down'):'');
+    setText('fundRevenue',Number.isFinite(revenue)?'最新月營收：'+fmtFundMoney(revenue):'最新月營收：—');
+    setFund('fundEPS',Number.isFinite(eps)?fmt(eps):'—');setText('fundEPSDate',financialValue(fin,['eps']).date||'最新季度');
+    setText('sumRevenue',Number.isFinite(yoy)?pct(yoy):'—'); setText('sumRevenueDate',lr?.date?'資料：'+lr.date:'最新月營收');
+    setText('sumEPS',Number.isFinite(eps)?fmt(eps):'—'); setText('sumEPSDate',financialValue(fin,['eps']).date||'最新季度');
+    if(Number.isFinite(yoy)) addSummaryTag('營收YoY '+pct(yoy));
+    if(Number.isFinite(eps)) addSummaryTag('EPS '+fmt(eps));
+    setFund('fundGrossMargin',Number.isFinite(gross)?fmt(gross,1)+'%':'—');setFund('fundOperatingMargin',Number.isFinite(op)?fmt(op,1)+'%':'—');setFund('fundROE',Number.isFinite(roe)?fmt(roe,1)+'%':'—');
+    setFund('fundPER',Number.isFinite(pe)?fmt(pe,2):'—');setText('fundPERDate',lp?.date||'—');setFund('fundPBR',Number.isFinite(pbr)?fmt(pbr,2):'—');setFund('fundYield',Number.isFinite(dy)?fmt(dy,2)+'%':'—');
+    renderQuarterTable(fin);
+    setText('fundDate','資料更新：'+(lr?.date||lp?.date||'—'));
+    const notes=[]; if(Number.isFinite(yoy))notes.push('最新月營收年增 '+pct(yoy)); if(Number.isFinite(gross))notes.push('毛利率 '+fmt(gross,1)+'%'); if(Number.isFinite(op))notes.push('營益率 '+fmt(op,1)+'%'); if(Number.isFinite(roe))notes.push('ROE '+fmt(roe,1)+'%');
+    setText('fundOpinion',notes.length?'基本面快照：'+notes.join('、')+'。建議搭配近四季趨勢、法人動向與公司公告一起判讀。':'目前取得的基本面欄位有限，請以 MOPS／公司公告為準。');
+  }catch(e){
+    ['fundRevenueYoY','fundEPS','fundGrossMargin','fundOperatingMargin','fundROE','fundPER','fundPBR','fundYield'].forEach(x=>setFund(x,'無資料','neutral'));
+    setText('fundOpinion','基本面資料目前無法取得；技術面仍可正常使用。若瀏覽器阻擋 FinMind 跨網域請求，正式版建議改用後端 Proxy。');
+    $('fundQuarterRows').innerHTML='<tr><td colspan="5">目前無法取得季度資料</td></tr>';
+  }
+}
+
 async function loadStock(id){
   id=id.replace(/\D/g,'').slice(0,6);if(!id)return;
   $('error').style.display='none';$('dataStatus').textContent='抓取資料…';document.body.classList.add('loading');
@@ -333,12 +730,25 @@ async function loadStock(id){
     const price=await getData('TaiwanStockPrice',id,start,end);
     if(!price.length)throw new Error('找不到這個股票代號的行情資料');
     analyze(price);
-    // Optional chip datasets; failure does not block technical analysis.
+    updateEventCompany(id);
+    // 基本面資料：失敗不影響技術分析。
+    await updateFundamentals(id,end);
+    // 法人資料：外資、投信、自營商分開計算；失敗不影響技術分析.
     try{
-      const inst=await getData('TaiwanStockInstitutionalInvestorsBuySell',id,datesBack(10),end);
-      const net=inst.slice(-5).reduce((s,x)=>s+(+x.buy||0)-(+x.sell||0),0);
-      setText('inst',fmtK(net));setText('instDir',net>0?'偏買超':net<0?'偏賣超':'接近中性');$('instDir').className=net>0?'up':net<0?'down':'neutral';
-    }catch(e){setText('inst','無資料');setText('instDir','—')}
+      const inst=await getData('TaiwanStockInstitutionalInvestorsBuySell',id,datesBack(35),end);
+      updateInstitutionalView(inst);
+      const total5=['Foreign_Investor','Investment_Trust'].reduce((s,n)=>s+sumInst(inst,n,5),0)
+        +sumInst(inst,'Dealer_self',5)+sumInst(inst,'Dealer_Hedging',5);
+      setText('inst',fmtK(total5));
+      setText('instDir',total5>0?'偏買超':total5<0?'偏賣超':'接近中性');
+      setText('sumInst',fmtSignedK(total5)); addSummaryTag(total5>0?'法人5日偏買':'法人5日偏賣');
+      $('instDir').className=total5>0?'up':total5<0?'down':'neutral';
+    }catch(e){
+      ['foreign5','trust5','dealer5'].forEach(x=>{setText(x,'無資料');$(x).className='neutral'});
+      ['foreign20','trust20','dealer20'].forEach(x=>setText(x,'20日：—'));
+      setText('instOpinion','目前無法取得法人明細，技術分析仍可正常使用。');
+      setText('inst','無資料');setText('instDir','—');
+    }
     try{
       const mg=await getData('TaiwanStockMarginPurchaseShortSale',id,datesBack(10),end);
       const first=mg.at(0),last=mg.at(-1),net=(+last.MarginPurchaseTodayBalance||0)-(+first.MarginPurchaseTodayBalance||0);
@@ -435,6 +845,8 @@ function openFromScan(id){
 }
 $('scanBtn').addEventListener('click',scanAll);
 
+updateSeasonality();
+updateUSMarket();
 </script>
 </body>
 </html>
