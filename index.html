@@ -140,6 +140,18 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 }
 </style>
 
+
+<style id="us-intraday-chart-style">
+.us-chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.us-chart-card{background:rgba(7,20,34,.72);border:1px solid #214766;border-radius:16px;padding:12px;min-width:0}
+.us-chart-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:7px}
+.us-chart-head strong{font-size:15px}
+.us-chart-head span{font-size:12px;color:#8fa7bb}
+.us-chart-canvas{width:100%;height:145px;display:block;border-radius:10px;background:rgba(2,10,20,.45)}
+.us-chart-empty{height:145px;display:flex;align-items:center;justify-content:center;color:#7895a9;font-size:13px;text-align:center}
+@media(max-width:850px){.us-chart-grid{grid-template-columns:1fr}}
+</style>
+
 </head>
 <body>
 <div class="wrap">
@@ -176,7 +188,7 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
       </datalist>
       <button id="go">開始分析 ✦</button>
     </div>
-    <div class="search-hint">💡 現在可以輸入「股票代號」或「公司中文名稱」；常用股票也會提供下拉選擇。</div>
+    <div class="search-hint">💡 可輸入「股票代號」或「公司中文名稱」；網站會載入目前上市／上櫃股票清單，名稱可直接搜尋。<span id="directoryStatus">股票名稱清單載入中…</span></div>
     <div class="tools">
       <button class="chip" data-stock="2330">2330 台積電</button>
       <button class="chip" data-stock="2454">2454 聯發科</button>
@@ -188,7 +200,7 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 <div class="personal">
   <div class="pbox"><small>♡ 我的自選股</small><b id="watchCount">0 檔</b></div>
   <div class="pbox"><small>🔎 今日掃描</small><b id="scanCount">尚未掃描</b></div>
-  <div class="pbox"><small>🎯 目前分析</small><b id="currentStock">3105</b></div>
+  <div class="pbox"><small>🎯 目前分析</small><b id="currentStock">尚未選擇</b></div>
   <div class="pbox"><small>⚖️ 風控上限</small><b id="riskDisplay">2%</b></div>
 </div>
 <div class="navrow">
@@ -206,7 +218,7 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
   <div class="grid" id="dashboard">
     <section class="card">
       <div class="head">
-        <div><div class="sym" id="sym">3105</div><div class="name" id="name">穩懋</div></div>
+        <div><div class="sym" id="sym">—</div><div class="name" id="name">尚未選擇股票</div></div>
         <div style="display:flex;gap:7px;align-items:center"><button class="chip" id="watchBtn" type="button">＋加入自選</button><div class="pill" id="trendPill">分析中</div></div>
       </div>
       <div class="price" id="price">—</div>
@@ -273,6 +285,7 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
           <div><label>投入資金（元）</label><input id="capital" type="number" value="500000" min="0" step="10000"></div>
           <div><label>單筆最大風險（%）</label><input id="riskPct" type="number" value="2" min="0.1" max="10" step="0.1"></div>
           <div><label>預計進場價</label><input id="customEntry" type="number" step="0.1" placeholder="自動帶入"></div>
+          <div><label>預計停損價</label><input id="customStop" type="number" step="0.1" placeholder="自動帶入"></div>
         </div>
         <div class="position-result">
           <div class="metric"><small>建議張數</small><strong id="shares">—</strong></div>
@@ -388,7 +401,25 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
         <div class="us-box"><small>Dow Jones</small><strong id="usDJ">—</strong><span>^DJI</span></div>
         <div class="us-box"><small>VIX</small><strong id="usVIX">—</strong><span>^VIX</span></div>
       </div>
-      <div class="inst-opinion"><b>海外參考：</b><span id="usOpinion">讀取美股資料中；若瀏覽器或資料來源限制，仍可使用下面官方／市場頁面查詢。</span></div>
+      <div class="inst-opinion"><b>海外參考：</b><span id="usOpinion">讀取美股資料中；若瀏覽器或資料來源限制，仍可使用下面市場連結查詢。</span></div>
+      <div class="us-chart-grid">
+        <div class="us-chart-card">
+          <div class="us-chart-head"><strong>S&P 500 當日走勢</strong><span id="usSPTime">—</span></div>
+          <canvas id="usSPChart" class="us-chart-canvas"></canvas>
+        </div>
+        <div class="us-chart-card">
+          <div class="us-chart-head"><strong>NASDAQ 當日走勢</strong><span id="usNDTime">—</span></div>
+          <canvas id="usNDChart" class="us-chart-canvas"></canvas>
+        </div>
+        <div class="us-chart-card">
+          <div class="us-chart-head"><strong>Dow Jones 當日走勢</strong><span id="usDJTime">—</span></div>
+          <canvas id="usDJChart" class="us-chart-canvas"></canvas>
+        </div>
+        <div class="us-chart-card">
+          <div class="us-chart-head"><strong>VIX 當日走勢</strong><span id="usVIXTime">—</span></div>
+          <canvas id="usVIXChart" class="us-chart-canvas"></canvas>
+        </div>
+      </div>
       <div class="event-grid" style="margin-top:10px">
         <div class="event-card">
           <h3>美股指數</h3>
@@ -452,20 +483,62 @@ const names={
   '2881':'富邦金','2882':'國泰金','2891':'中信金'
 };
 const aliases={};
-Object.entries(names).forEach(([id,name])=>{aliases[name]=id;aliases[name.replace(/台灣|股份有限公司|公司/g,'')]=id;});
+const stockDirectory=new Map();
+Object.entries(names).forEach(([id,name])=>{aliases[name]=id;aliases[name.replace(/台灣|股份有限公司|公司/g,'')]=id;stockDirectory.set(id,{stock_id:id,stock_name:name,type:'twse'});});
+let directoryLoaded=false;
+function cleanName(s){return String(s||'').trim().replace(/\s+/g,'');}
+async function loadStockDirectory(){
+  try{
+    const rows=await getData('TaiwanStockInfo');
+    const latest=new Map();
+    rows.forEach(r=>{
+      const id=String(r.stock_id||'').trim(), type=String(r.type||'');
+      if(!id || !['twse','tpex'].includes(type)) return;
+      const old=latest.get(id);
+      if(!old || String(r.date||'')>String(old.date||'')) latest.set(id,r);
+    });
+    latest.forEach((r,id)=>{
+      stockDirectory.set(id,r);
+      if(r.stock_name){
+        names[id]=r.stock_name;
+        const n=cleanName(r.stock_name);
+        aliases[n]=id;
+        aliases[n.replace(/台灣|股份有限公司|公司/g,'')]=id;
+      }
+    });
+    directoryLoaded=true;
+    setText('directoryStatus',`已載入 ${latest.size.toLocaleString()} 檔上市／上櫃股票名稱`);
+    return true;
+  }catch(e){
+    setText('directoryStatus','股票名稱清單暫時無法更新，仍可輸入代號查詢');
+    return false;
+  }
+}
+function findStockIdByName(raw){
+  const q=cleanName(raw).toLowerCase();
+  if(!q) return '';
+  if(aliases[q]) return aliases[q];
+  for(const [id,r] of stockDirectory){
+    const n=cleanName(r.stock_name).toLowerCase();
+    if(n===q || n.includes(q)) return id;
+  }
+  return '';
+}
 function normalizeStockInput(raw){
   const s=String(raw||'').trim();
   if(!s) return '';
   if(/^\d{4,6}$/.test(s)) return s;
-  return aliases[s]||aliases[s.replace(/\s+/g,'')]||'';
+  return findStockIdByName(s)||aliases[s]||'';
 }
 async function resolveStockName(id){
   if(names[id]) return names[id];
+  const r=stockDirectory.get(String(id));
+  if(r?.stock_name){names[id]=r.stock_name;return r.stock_name;}
   try{
-    const rows=await getData('TaiwanStockInfo',id,'2000-01-01',new Date().toISOString().slice(0,10));
-    const r=rows?.find(x=>String(x.stock_id||x.StockID||'')===String(id))||rows?.at(-1);
-    const n=r?.stock_name||r?.stock_name_ch||r?.name||r?.公司簡稱||r?.公司名稱;
-    if(n){names[id]=n;aliases[n]=id;return n;}
+    const rows=await getData('TaiwanStockInfo',id);
+    const rr=rows?.find(x=>String(x.stock_id||'')===String(id))||rows?.at(-1);
+    const n=rr?.stock_name||rr?.stock_name_ch||rr?.name||rr?.公司簡稱||rr?.公司名稱;
+    if(n){names[id]=n;aliases[cleanName(n)]=id;stockDirectory.set(String(id),rr);return n;}
   }catch(e){}
   return '台股 '+id;
 }
@@ -481,7 +554,7 @@ function fmtK(n){return Number.isFinite(n)?(Math.abs(n)>=1000000?(n/1000000).toF
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 
 async function getData(dataset,id,start,end){
-  const u=new URL(API);u.searchParams.set('dataset',dataset);u.searchParams.set('data_id',id);u.searchParams.set('start_date',start);u.searchParams.set('end_date',end);
+  const u=new URL(API);u.searchParams.set('dataset',dataset);if(id)u.searchParams.set('data_id',id);if(start)u.searchParams.set('start_date',start);if(end)u.searchParams.set('end_date',end);
   const token=$('token').value.trim(); const opt=token?{headers:{Authorization:'Bearer '+token}}:{};
   const r=await fetch(u,opt); if(!r.ok) throw new Error(dataset+' HTTP '+r.status);
   const j=await r.json(); if(!j.data) throw new Error(dataset+' 無資料');
@@ -519,14 +592,74 @@ async function fetchUSQuote(symbol){
   const r=await fetch(url);
   if(!r.ok) throw new Error('US quote '+r.status);
   const j=await r.json();
-  const m=j.chart.result?.[0]?.meta||{};
+  const result=j.chart.result?.[0];
+  const m=result?.meta||{};
   const q=m.regularMarketPrice, prev=m.chartPreviousClose||m.previousClose;
   return {price:q,chg:prev?((q-prev)/prev*100):null};
 }
+
+async function fetchUSIntraday(symbol){
+  const url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(symbol)+'?range=1d&interval=5m&includePrePost=false';
+  const r=await fetch(url);
+  if(!r.ok) throw new Error('US intraday '+r.status);
+  const j=await r.json();
+  const result=j.chart.result?.[0];
+  if(!result) throw new Error('No intraday result');
+  const q=result.indicators?.quote?.[0]||{};
+  const ts=result.timestamp||[];
+  const points=[];
+  for(let i=0;i<ts.length;i++){
+    const v=q.close?.[i];
+    if(v!=null && Number.isFinite(+v)) points.push({t:ts[i]*1000,v:+v});
+  }
+  return {points,meta:result.meta||{}};
+}
+
 function usText(x){
   if(!x||x.price==null) return '—';
   return x.price.toLocaleString('en-US',{maximumFractionDigits:2})+(x.chg==null?'':(' '+(x.chg>=0?'+':'')+x.chg.toFixed(2)+'%'));
 }
+
+function drawUSChart(canvasId, points, timeId){
+  const canvas=$(canvasId);
+  if(!canvas) return;
+  const wrap=canvas.parentElement;
+  const dpr=window.devicePixelRatio||1;
+  const w=Math.max(280,wrap.clientWidth-24), h=145;
+  canvas.width=w*dpr; canvas.height=h*dpr; canvas.style.width=w+'px'; canvas.style.height=h+'px';
+  const ctx=canvas.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  if(!points?.length){
+    canvas.style.display='none';
+    let empty=wrap.querySelector('.us-chart-empty');
+    if(!empty){empty=document.createElement('div');empty.className='us-chart-empty';wrap.appendChild(empty);}
+    empty.textContent='目前無法取得當日盤中資料\\n可用下方市場連結查看最新走勢。';
+    return;
+  }
+  const empty=wrap.querySelector('.us-chart-empty'); if(empty) empty.remove();
+  canvas.style.display='block';
+  const vals=points.map(p=>p.v), min=Math.min(...vals), max=Math.max(...vals);
+  const pad={l:8,r:8,t:10,b:22};
+  const iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
+  const range=(max-min)||Math.max(Math.abs(max)*0.001,1);
+  const x=i=>pad.l+(i/(points.length-1||1))*iw;
+  const y=v=>pad.t+(max-v)/range*ih;
+  ctx.strokeStyle='rgba(120,160,190,.18)'; ctx.lineWidth=1;
+  for(let i=0;i<4;i++){const gy=pad.t+i*ih/3;ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(w-pad.r,gy);ctx.stroke();}
+  ctx.beginPath();
+  points.forEach((p,i)=>{const px=x(i),py=y(p.v);if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);});
+  ctx.strokeStyle=vals[vals.length-1]>=vals[0]?'#42e8c4':'#ff6b7a'; ctx.lineWidth=2.2; ctx.stroke();
+  ctx.lineTo(x(points.length-1),h-pad.b);ctx.lineTo(x(0),h-pad.b);ctx.closePath();
+  ctx.fillStyle=vals[vals.length-1]>=vals[0]?'rgba(66,232,196,.08)':'rgba(255,107,122,.08)';ctx.fill();
+  ctx.fillStyle='#7895a9';ctx.font='11px system-ui,sans-serif';
+  ctx.fillText(max.toLocaleString('en-US',{maximumFractionDigits:2}),pad.l,11);
+  ctx.fillText(min.toLocaleString('en-US',{maximumFractionDigits:2}),pad.l,h-5);
+  const last=points[points.length-1].t;
+  const dt=new Date(last);
+  const label=dt.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const te=$(timeId); if(te) te.textContent='最後資料 '+label;
+}
+
 async function updateUSMarket(){
   const map=[['usSP','^GSPC'],['usND','^IXIC'],['usDJ','^DJI'],['usVIX','^VIX']];
   try{
@@ -535,9 +668,25 @@ async function updateUSMarket(){
     const vix=vals[3]?.price;
     setText('usOpinion',vix!=null?(vix>=25?'VIX 偏高，台股風險情緒可多留意波動。':vix>=20?'VIX 位於偏高區間，留意盤勢波動。':'VIX 相對平穩，可再搭配 Nasdaq／半導體表現觀察。'):'美股資料已載入。');
   }catch(e){
-    setText('usOpinion','目前瀏覽器無法直接取得美股即時資料；請使用下方市場連結查看最新數字。');
+    setText('usOpinion','目前瀏覽器無法直接取得美股即時資料；下方走勢圖也可能因資料來源限制而無法顯示。');
   }
+
+  const charts=[
+    ['^GSPC','usSPChart','usSPTime'],
+    ['^IXIC','usNDChart','usNDTime'],
+    ['^DJI','usDJChart','usDJTime'],
+    ['^VIX','usVIXChart','usVIXTime']
+  ];
+  await Promise.all(charts.map(async c=>{
+    try{
+      const data=await fetchUSIntraday(c[0]);
+      drawUSChart(c[1],data.points,c[2]);
+    }catch(e){
+      drawUSChart(c[1],[],c[2]);
+    }
+  }));
 }
+
 
 
 function fmtSignedK(n){
@@ -655,7 +804,7 @@ function analyze(rows){
   $('price').innerHTML=fmt(cur)+' <span class="'+(cur>=prev?'up':'down')+'" style="font-size:14px">'+(cur>=prev?'▲ ':'▼ ')+pct((cur/prev-1)*100)+'</span>';
   $('trendPill').textContent=label;$('trendPill').style.background=score>=60?'#10352e':score<45?'#3b1820':'#3b3313';
   setText('rsi',fmt(rrsi,1));setText('macd',fmt(macd));setText('ma20',fmt(m20));setText('ma60',fmt(m60));setText('atr',fmt(aatr));setText('volRatio',fmt(vr,2)+'x');
-  setText('entry',fmt(entryLow)+' ~ '+fmt(entryHigh));latestPlan={entry:(entryLow+entryHigh)/2,stop:stop,price:cur};if(!$('customEntry').value)$('customEntry').value=fmt((entryLow+entryHigh)/2);updatePosition();setText('entryNote',entryLow<=cur?'靠近現價／回測區':'等待回落至區間');
+  setText('entry',fmt(entryLow)+' ~ '+fmt(entryHigh));latestPlan={entry:(entryLow+entryHigh)/2,stop:stop,price:cur};if(!$('customEntry').value)$('customEntry').value=fmt((entryLow+entryHigh)/2);if(!$('customStop').value)$('customStop').value=fmt(stop);updatePosition();setText('entryNote',entryLow<=cur?'靠近現價／回測區':'等待回落至區間');
   setText('stop',fmt(stop));setText('stopNote','跌破此區代表原先邏輯失效');
   setText('target1',fmt(target1));setText('target1Note',distance(cur,target1)+' / 前波壓力');
   setText('target2',fmt(target2));setText('target2Note',distance(cur,target2)+' / ATR延伸');
@@ -673,22 +822,36 @@ function analyze(rows){
 let latestPlan={entry:NaN,stop:NaN,price:NaN};
 function updatePosition(){
   const capital=+$('capital').value||0, riskPct=+$('riskPct').value||0;
-  const entry=(+$('customEntry').value)||latestPlan.entry;
-  const stop=latestPlan.stop;
+  const entry=(+$('customEntry').value)||latestPlan.entry||latestPlan.price;
+  const stop=(+$('customStop').value)||latestPlan.stop;
+  const maxLoss=capital>0&&riskPct>0 ? capital*riskPct/100 : 0;
+
+  // 最大可承受損失只跟資金與風險%有關，沒有股票資料也應該能先算出來。
+  setText('maxLoss',maxLoss>0?'NT$ '+Math.round(maxLoss).toLocaleString():'—');
+
   if(!(capital>0&&riskPct>0&&entry>0&&stop>0&&entry>stop)){
-    setText('shares','—');setText('maxLoss','—');setText('usedCapital','—');setText('riskPerLot','—');return;
+    setText('shares','—');
+    setText('usedCapital','—');
+    setText('riskPerLot','—');
+    return;
   }
-  const maxLoss=capital*riskPct/100;
+
   const riskPerShare=entry-stop;
   const riskPerLot=riskPerShare*1000;
-  const lots=Math.max(0,Math.floor(maxLoss/riskPerLot));
+  const riskLots=Math.floor(maxLoss/riskPerLot);
+  const capitalLots=Math.floor(capital/(entry*1000));
+  const lots=Math.max(0,Math.min(riskLots,capitalLots));
   const used=lots*entry*1000;
+
   setText('shares',lots+' 張');
-  setText('maxLoss','NT$ '+Math.round(maxLoss).toLocaleString());
   setText('usedCapital','NT$ '+Math.round(used).toLocaleString());
   setText('riskPerLot','NT$ '+Math.round(riskPerLot).toLocaleString());
 }
-['capital','riskPct','customEntry'].forEach(id=>$(id).addEventListener('input',()=>{updatePosition();$('riskDisplay').textContent=(+$('riskPct').value||0)+'%'}));$('riskDisplay').textContent=(+$('riskPct').value||2)+'%';
+['capital','riskPct','customEntry','customStop'].forEach(id=>$(id).addEventListener('input',()=>{
+  updatePosition();
+  $('riskDisplay').textContent=(+$('riskPct').value||0)+'%';
+}));
+$('riskDisplay').textContent=(+$('riskPct').value||2)+'%';
 
 
 const WATCH_KEY='huanhuan_stock_watchlist_v1';
@@ -782,7 +945,12 @@ async function loadStock(id){
     const start=datesBack(260),end=new Date().toISOString().slice(0,10);
     const price=await getData('TaiwanStockPrice',id,start,end);
     if(!price.length)throw new Error('找不到這個股票代號的行情資料');
-    await resolveStockName(id);
+    const stockName=await resolveStockName(id);
+    $('stock').value = stockName;
+    setText('currentStock', id+' '+stockName);
+    setText('sym', id);
+    setText('name', stockName);
+    setText('sumCompany', id+'｜'+stockName);
     analyze(price);
     updateEventCompany(id);
     // 基本面資料：失敗不影響技術分析。
@@ -814,11 +982,11 @@ async function loadStock(id){
     $('error').style.display='block';$('dataStatus').textContent='資料取得失敗';
   }finally{document.body.classList.remove('loading')}
 }
-$('resetRisk').onclick=()=>{$('capital').value=500000;$('riskPct').value=2;$('customEntry').value='';updatePosition()};
+$('resetRisk').onclick=()=>{$('capital').value=500000;$('riskPct').value=2;$('customEntry').value='';$('customStop').value='';latestPlan={entry:NaN,stop:NaN,price:NaN};updatePosition()};
 $('go').onclick=()=>loadStock($('stock').value);
 $('stock').addEventListener('keydown',e=>{if(e.key==='Enter')loadStock($('stock').value)});
 document.querySelectorAll('.chip[data-stock]').forEach(b=>b.onclick=()=>{$('stock').value=b.dataset.stock;loadStock(b.dataset.stock)});
-loadStock('3105');
+loadStockDirectory();
 
 const SCAN_POOL=[
   ['2330','台積電'],['2454','聯發科'],['2317','鴻海'],['2303','聯電'],
