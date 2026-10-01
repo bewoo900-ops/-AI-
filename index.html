@@ -65,6 +65,9 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 @media(max-width:850px){.personal{grid-template-columns:repeat(2,1fr)}}
 </style>
 
+<style id="search-name-input-style">
+.search-hint{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.5}
+</style>
 <style id="desktop-dashboard-layout">
 /* Desktop dashboard: reduce vertical scrolling while preserving all information. */
 @media (min-width: 1000px) {
@@ -150,9 +153,30 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
     <h1>歡歡今天<br><span>想看哪支股票</span><b>？</b></h1>
     <p>輸入台股代號，系統會抓取歷史行情並計算均線、RSI、MACD、ATR、波動率、支撐壓力與風險報酬。結果是「規則化分析」，不是保證漲跌。</p>
     <div class="search">
-      <input id="stock" value="3105" inputmode="numeric" placeholder="股票代號，例如 2330 / 3105 / 8358">
+      <input id="stock" value="" inputmode="text" list="stockSuggestions" autocomplete="off" placeholder="輸入代號或公司名稱，例如 2330／台積電／穩懋">
+      <datalist id="stockSuggestions">
+        <option value="2330">台積電</option>
+        <option value="2454">聯發科</option>
+        <option value="3105">穩懋</option>
+        <option value="8358">金居</option>
+        <option value="2317">鴻海</option>
+        <option value="2382">廣達</option>
+        <option value="2308">台達電</option>
+        <option value="3231">緯創</option>
+        <option value="6669">緯穎</option>
+        <option value="3034">聯詠</option>
+        <option value="2379">瑞昱</option>
+        <option value="3711">日月光投控</option>
+        <option value="2603">長榮</option>
+        <option value="2615">萬海</option>
+        <option value="2618">長榮航</option>
+        <option value="2881">富邦金</option>
+        <option value="2882">國泰金</option>
+        <option value="2891">中信金</option>
+      </datalist>
       <button id="go">開始分析 ✦</button>
     </div>
+    <div class="search-hint">💡 現在可以輸入「股票代號」或「公司中文名稱」；常用股票也會提供下拉選擇。</div>
     <div class="tools">
       <button class="chip" data-stock="2330">2330 台積電</button>
       <button class="chip" data-stock="2454">2454 聯發科</button>
@@ -421,7 +445,30 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 
 <script>
 const API='https://api.finmindtrade.com/api/v4/data';
-const names={'2330':'台積電','2454':'聯發科','3105':'穩懋','8358':'金居','2317':'鴻海'};
+const names={
+  '2330':'台積電','2454':'聯發科','3105':'穩懋','8358':'金居','2317':'鴻海',
+  '2382':'廣達','2308':'台達電','3231':'緯創','6669':'緯穎','3034':'聯詠',
+  '2379':'瑞昱','3711':'日月光投控','2603':'長榮','2615':'萬海','2618':'長榮航',
+  '2881':'富邦金','2882':'國泰金','2891':'中信金'
+};
+const aliases={};
+Object.entries(names).forEach(([id,name])=>{aliases[name]=id;aliases[name.replace(/台灣|股份有限公司|公司/g,'')]=id;});
+function normalizeStockInput(raw){
+  const s=String(raw||'').trim();
+  if(!s) return '';
+  if(/^\d{4,6}$/.test(s)) return s;
+  return aliases[s]||aliases[s.replace(/\s+/g,'')]||'';
+}
+async function resolveStockName(id){
+  if(names[id]) return names[id];
+  try{
+    const rows=await getData('TaiwanStockInfo',id,'2000-01-01',new Date().toISOString().slice(0,10));
+    const r=rows?.find(x=>String(x.stock_id||x.StockID||'')===String(id))||rows?.at(-1);
+    const n=r?.stock_name||r?.stock_name_ch||r?.name||r?.公司簡稱||r?.公司名稱;
+    if(n){names[id]=n;aliases[n]=id;return n;}
+  }catch(e){}
+  return '台股 '+id;
+}
 const $=id=>document.getElementById(id);
 const fmt=(n,d=2)=>Number.isFinite(n)?n.toFixed(d):'—';
 const pct=(n,d=1)=>Number.isFinite(n)?(n>=0?'+':'')+n.toFixed(d)+'%':'—';
@@ -723,12 +770,19 @@ async function updateFundamentals(id,end){
 }
 
 async function loadStock(id){
-  id=id.replace(/\D/g,'').slice(0,6);if(!id)return;
+  const raw=String(id||'').trim();
+  id=normalizeStockInput(raw);
+  if(!id){
+    $('error').textContent='請輸入 4～6 碼股票代號，或公司中文名稱，例如「台積電」、「聯發科」、「穩懋」。';
+    $('error').style.display='block';
+    return;
+  }
   $('error').style.display='none';$('dataStatus').textContent='抓取資料…';document.body.classList.add('loading');
   try{
     const start=datesBack(260),end=new Date().toISOString().slice(0,10);
     const price=await getData('TaiwanStockPrice',id,start,end);
     if(!price.length)throw new Error('找不到這個股票代號的行情資料');
+    await resolveStockName(id);
     analyze(price);
     updateEventCompany(id);
     // 基本面資料：失敗不影響技術分析。
@@ -763,7 +817,7 @@ async function loadStock(id){
 $('resetRisk').onclick=()=>{$('capital').value=500000;$('riskPct').value=2;$('customEntry').value='';updatePosition()};
 $('go').onclick=()=>loadStock($('stock').value);
 $('stock').addEventListener('keydown',e=>{if(e.key==='Enter')loadStock($('stock').value)});
-document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('stock').value=b.dataset.stock;loadStock(b.dataset.stock)});
+document.querySelectorAll('.chip[data-stock]').forEach(b=>b.onclick=()=>{$('stock').value=b.dataset.stock;loadStock(b.dataset.stock)});
 loadStock('3105');
 
 const SCAN_POOL=[
