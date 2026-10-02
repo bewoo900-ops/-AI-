@@ -195,6 +195,9 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 
 .app-view[hidden]{display:none!important}.view-switch{font:inherit;cursor:pointer;background:#081b2b;color:#b9d1df}.view-switch:hover{border-color:#2a708e;color:#fff}
 #swingView{padding-top:18px}.swing-radar{margin-top:0}
+
+/* V7 market scanner + institutional leaderboard */
+.inst-rank{margin:18px 0;background:linear-gradient(135deg,#071a2a,#0a2133);border:1px solid #1d4d69;border-radius:20px;padding:18px}.rank-tabs,.rank-side{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.rank-btn{border:1px solid #214a65;background:#091d2f;color:#a9c5d8;border-radius:999px;padding:8px 12px;cursor:pointer}.rank-btn.active{background:linear-gradient(90deg,#1bdcff,#5c7dff);color:#04101a;border-color:transparent;font-weight:900}.rank-meta{color:#7895a9;font-size:11px;line-height:1.6;margin-top:10px}.rank-scroll{overflow:auto;margin-top:12px}.rank-table{width:100%;border-collapse:collapse;min-width:720px;font-size:12px}.rank-table th{color:#7895a9;text-align:left;padding:9px 7px;border-bottom:1px solid #1b405a}.rank-table td{padding:10px 7px;border-bottom:1px solid #132d41}.rank-table tr[data-code]{cursor:pointer}.rank-table tr[data-code]:hover{background:#0c2438}.rank-refresh{border:0;border-radius:11px;background:linear-gradient(90deg,#20d9ff,#5e7eff);font-weight:900;color:#04101a;cursor:pointer;padding:9px 13px}.rank-empty{padding:24px;text-align:center;color:#7895a9;border:1px dashed #21455f;border-radius:14px;margin-top:12px}
 </style>
 
 </head>
@@ -202,7 +205,7 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 <div class="wrap">
   <header class="top">
     <a class="brand" id="homeBrand" href="#home" aria-label="回到首頁" style="text-decoration:none;color:inherit"><div class="logo">↗</div><div>歡歡的台股 AI 雷達<small>HUANHUAN'S TAIWAN STOCK RADAR</small></div></a>
-    <div style="display:flex;gap:8px;align-items:center"><button class="status view-switch" id="swingNav" type="button">🎯 波段選股</button><div class="status" id="dataStatus">等待分析</div></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><button class="status view-switch" id="swingNav" type="button">🎯 波段選股</button><button class="status view-switch" id="instNav" type="button">🏦 法人排行</button><div class="status" id="dataStatus">等待分析</div></div>
   </header>
 
   <section id="swingView" class="app-view" hidden>
@@ -214,6 +217,17 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
   <div class="swing-grid" id="swingList"><div class="swing-empty">正在掃描近期行情與模型訊號，請稍候…</div></div>
   <div class="swing-note">⚠️ 雷達以「低位／錯殺、基本面品質、法人轉強、營收加速、量先價行、起漲動能、歷史相似型態」綜合排序。7 日爆發潛力是條件分數，不是未來報酬率或獲利保證；偏空僅代表目前條件較弱。</div>
 </section>
+  </section>
+
+  <section id="institutionView" class="app-view" hidden>
+    <section class="inst-rank">
+      <div class="swing-head"><div><h2>🏦 最近一週法人買賣超 Top 30</h2><p>以最近 5 個有資料的交易日累計，整合上市＋上櫃普通股；可切換外資、投信、自營商與三大法人合計。</p></div><button id="instRefresh" class="rank-refresh" type="button">🔄 重新整理</button></div>
+      <div class="rank-tabs" id="instTypeTabs"><button class="rank-btn active" data-inst="foreign">外資</button><button class="rank-btn" data-inst="trust">投信</button><button class="rank-btn" data-inst="dealer">自營商</button><button class="rank-btn" data-inst="total">三大法人</button></div>
+      <div class="rank-side" id="instSideTabs"><button class="rank-btn active" data-side="buy">買超 Top 30</button><button class="rank-btn" data-side="sell">賣超 Top 30</button></div>
+      <div class="rank-meta" id="instRankMeta">等待載入最近 5 個交易日…</div>
+      <div class="rank-scroll"><table class="rank-table"><thead><tr><th>#</th><th>股票</th><th>5日累計</th><th>最新交易日</th><th>連續方向</th><th>市場</th></tr></thead><tbody id="instRankBody"><tr><td colspan="6"><div class="rank-empty">點選「法人排行」後自動載入。</div></td></tr></tbody></table></div>
+      <div class="warning">資料以公開市場資訊整理，張數以股數 ÷ 1,000 換算。僅供研究，不構成投資建議；實際資料以 TWSE／TPEx 公告為準。</div>
+    </section>
   </section>
 
   <div id="analysisView" class="app-view">
@@ -1035,9 +1049,10 @@ const SWING_POOL=[
   '2603','2615','2618','2609','2634','2881','2882','2891','2886','2884',
   '1301','1303','2002','1101','5871','5880','1216','2912'
 ];
-const SWING_CACHE_KEY='huanhuan_swing_radar_v6_catalyst';
+const SWING_CACHE_KEY='huanhuan_swing_radar_v7_dynamic';
+const SWING_SEEN_KEY='huanhuan_swing_seen_v7';
 function loadSwingCache(){
-  try{const x=JSON.parse(localStorage.getItem(SWING_CACHE_KEY)||'null');if(x&&Date.now()-x.savedAt<2*60*60*1000&&Array.isArray(x.items)&&x.items.length)return x.items;}catch(e){}return null;
+  try{const x=JSON.parse(localStorage.getItem(SWING_CACHE_KEY)||'null');if(x&&Date.now()-x.savedAt<45*60*1000&&Array.isArray(x.items)&&x.items.length)return x.items;}catch(e){}return null;
 }
 function saveSwingCache(items){try{localStorage.setItem(SWING_CACHE_KEY,JSON.stringify({savedAt:Date.now(),items}));}catch(e){}}
 async function mapLimit(list,limit,worker){
@@ -1052,10 +1067,16 @@ async function loadSwingRadar(){
     $('swingStatus').textContent='正在掃描波段候選…';
     await ensureStockDirectory();
     let done=0, failed=0;
-    const candidates=await mapLimit(SWING_POOL,4,async code=>{
+    const watchCodes=getWatch().map(x=>x.id);
+    const directoryCodes=[...stockDirectory.keys()].filter(x=>/^\d{4}$/.test(x));
+    const daySeed=Math.floor(Date.now()/86400000);
+    const rotated=directoryCodes.length?directoryCodes.slice(daySeed%directoryCodes.length).concat(directoryCodes.slice(0,daySeed%directoryCodes.length)):[];
+    const marketPool=[...new Set([...watchCodes,...SWING_POOL,...rotated])].slice(0,160);
+    $('swingStatus').textContent=`市場初篩 ${marketPool.length} 檔｜正在讀取行情…`;
+    const candidates=await mapLimit(marketPool,6,async code=>{
       try{
         const rs=await getSwingPriceRows(code);
-        done++; if(done%3===0)$('swingStatus').textContent=`正在分析 ${done}/${SWING_POOL.length}…`;
+        done++; if(done%5===0)$('swingStatus').textContent=`市場初篩 ${marketPool.length} 檔｜已分析 ${done} 檔…`;
         const x=swingSignalScore(rs); if(!x)return null;
         const name=(await resolveStockName(code))||names[code]||code;
         return {...x,code,name};
@@ -1063,7 +1084,7 @@ async function loadSwingRadar(){
     });
     // 先用價格/量價模型取前 18 名，再補基本面，避免對全池大量呼叫財報 API。
     candidates.sort((a,b)=>b.score-a.score);
-    const shortlist=candidates.slice(0,18);
+    const shortlist=candidates.slice(0,36);
     $('swingStatus').textContent=`正在檢查 ${shortlist.length} 支候選基本面…`;
     await mapLimit(shortlist,3,async x=>{
       const d=await swingDeepScore(x.code,x);
@@ -1078,7 +1099,7 @@ async function loadSwingRadar(){
     const top=shortlist.slice(0,10);
     if(!top.length)throw new Error('候選資料不足');
     saveSwingCache(top);
-    renderSwingRadar(top,`已完成｜${candidates.length} 檔有效候選｜錯殺＋起漲＋基本面＋法人／營收／量價催化｜每 2 小時更新`);
+    renderSwingRadar(top,`已完成｜市場初篩 ${marketPool.length} 檔｜${candidates.length} 檔有效｜深度分析 ${shortlist.length} 檔｜最終 10 檔｜45 分鐘更新`);
   }catch(e){
     const msg=(e&&e.message)?e.message:'資料來源連線失敗';
     $('swingStatus').textContent='波段雷達載入失敗';
@@ -1214,6 +1235,41 @@ function renderForecast(rows){
   setText('fcReason',`以 ${rows.at(-1).date} 的型態與過去相似交易日比較：5日報酬中位數 ${pc(p5.median)}，歷史中 5日上漲比例約 ${prob.toFixed(0)}%。預估價格約 ${price(p5.median)}；20日中位數報酬 ${pc(p20.median)}。近期樣本的方向命中率約 ${Number.isFinite(hit)?(hit*100).toFixed(0)+'%':'無法估算'}，僅代表這套規則在最近歷史資料上的回測表現。`);
 }
 
+// V7 法人排行榜：最近 5 個交易日，上市 TWSE + 上櫃 TPEx。
+let instRankLoaded=false, instRankData=[], instRankType='foreign', instRankSide='buy';
+function ymdCompact(d){return d.toISOString().slice(0,10).replaceAll('-','')}
+function rocDate(d){return `${d.getFullYear()-1911}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`}
+function nnum(v){const n=Number(String(v??'').replaceAll(',','').replaceAll(' ','').replace('−','-'));return Number.isFinite(n)?n:0}
+function isCommonStock(code){return /^\\d{4}$/.test(String(code||''))}
+async function fetchTwseInstDay(d){
+  const url=`https://www.twse.com.tw/rwd/zh/fund/T86?date=${ymdCompact(d)}&selectType=ALLBUT0999&response=json`;
+  const r=await fetch(url,{cache:'no-store'}); if(!r.ok)throw new Error('TWSE '+r.status); const j=await r.json();
+  const a=Array.isArray(j.data)?j.data:[]; return a.filter(x=>isCommonStock(x[0])).map(x=>({date:d.toISOString().slice(0,10),market:'上市',code:String(x[0]).trim(),name:String(x[1]).trim(),foreign:nnum(x[4]),trust:nnum(x[10]),dealer:nnum(x[11]),total:nnum(x[18])}));
+}
+async function fetchTpexInstDay(d){
+  const url=`https://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_result.php?l=zh-tw&o=json&d=${encodeURIComponent(rocDate(d))}`;
+  const r=await fetch(url,{cache:'no-store'}); if(!r.ok)throw new Error('TPEx '+r.status); const j=await r.json();
+  const a=j?.aaData||j?.data||[]; return a.filter(x=>isCommonStock(x[0])).map(x=>({date:d.toISOString().slice(0,10),market:'上櫃',code:String(x[0]).trim(),name:String(x[1]).trim(),foreign:nnum(x[8]??x[4]),trust:nnum(x[11]??x[10]),dealer:nnum(x[20]??x[11]),total:nnum(x[21]??x.at?.(-1))}));
+}
+async function fetchInstTradingDays(){
+  const days=[]; const now=new Date();
+  for(let back=1;back<=14 && days.length<5;back++){const d=new Date(now);d.setDate(now.getDate()-back);if(d.getDay()===0||d.getDay()===6)continue;
+    const [tw,tp]=await Promise.allSettled([fetchTwseInstDay(d),fetchTpexInstDay(d)]); const rows=[];if(tw.status==='fulfilled')rows.push(...tw.value);if(tp.status==='fulfilled')rows.push(...tp.value);if(rows.length)days.push({date:d.toISOString().slice(0,10),rows});}
+  return days.sort((a,b)=>a.date.localeCompare(b.date));
+}
+function aggregateInstDays(days){const m=new Map();for(const day of days)for(const r of day.rows){const k=r.market+':'+r.code;if(!m.has(k))m.set(k,{code:r.code,name:r.name,market:r.market,days:[]});m.get(k).days.push(r)}
+  return [...m.values()].map(x=>{x.days.sort((a,b)=>a.date.localeCompare(b.date));for(const k of ['foreign','trust','dealer','total'])x[k]=x.days.reduce((s,r)=>s+(r[k]||0),0);return x});}
+function streakFor(x,k){let dir=0,n=0;for(let i=x.days.length-1;i>=0;i--){const v=x.days[i][k]||0,d=v>0?1:v<0?-1:0;if(!d)break;if(!dir)dir=d;if(d!==dir)break;n++}return n?`${dir>0?'連買':'連賣'} ${n} 日`:'—'}
+function lots(v){return `${v>=0?'+':''}${Math.round(v/1000).toLocaleString()} 張`}
+function renderInstRank(){const rows=instRankData.slice().filter(x=>(instRankSide==='buy'?x[instRankType]>0:x[instRankType]<0)).sort((a,b)=>instRankSide==='buy'?b[instRankType]-a[instRankType]:a[instRankType]-b[instRankType]).slice(0,30);
+  const body=$('instRankBody');body.innerHTML=rows.length?rows.map((x,i)=>{const latest=x.days.at(-1)?.[instRankType]||0;return `<tr data-code="${esc(x.code)}"><td>${i+1}</td><td><b>${esc(x.code)} ${esc(x.name)}</b></td><td class="${x[instRankType]>=0?'up':'down'}">${lots(x[instRankType])}</td><td class="${latest>=0?'up':'down'}">${lots(latest)}</td><td>${streakFor(x,instRankType)}</td><td>${x.market}</td></tr>`}).join(''):'<tr><td colspan="6"><div class="rank-empty">目前沒有可排序資料。</div></td></tr>';
+  body.querySelectorAll('tr[data-code]').forEach(tr=>tr.onclick=()=>openFromScan(tr.dataset.code));}
+async function loadInstitutionRank(force=false){if(instRankLoaded&&!force){renderInstRank();return} $('instRankMeta').textContent='正在取得最近 5 個交易日的 TWSE／TPEx 法人資料…';$('instRankBody').innerHTML='<tr><td colspan="6"><div class="rank-empty">資料載入中…</div></td></tr>';
+  try{const days=await fetchInstTradingDays();if(!days.length)throw new Error('最近交易日資料暫時無法取得');instRankData=aggregateInstDays(days);instRankLoaded=true;renderInstRank();$('instRankMeta').textContent=`資料區間 ${days[0].date} ～ ${days.at(-1).date}｜${days.length} 個交易日｜上市＋上櫃普通股｜更新 ${new Date().toLocaleString('zh-TW')}`;}catch(e){$('instRankMeta').textContent='法人排行載入失敗';$('instRankBody').innerHTML=`<tr><td colspan="6"><div class="rank-empty">${esc(e.message)}。請按「重新整理」再試。</div></td></tr>`;}}
+document.querySelectorAll('[data-inst]').forEach(b=>b.onclick=()=>{instRankType=b.dataset.inst;document.querySelectorAll('[data-inst]').forEach(x=>x.classList.toggle('active',x===b));renderInstRank()});
+document.querySelectorAll('[data-side]').forEach(b=>b.onclick=()=>{instRankSide=b.dataset.side;document.querySelectorAll('[data-side]').forEach(x=>x.classList.toggle('active',x===b));renderInstRank()});
+$('instRefresh').onclick=()=>loadInstitutionRank(true);
+
 // 分頁式介面：個股分析與波段選股彼此獨立。
 let swingLoaded=false;
 function scrollPageTop(){
@@ -1222,31 +1278,14 @@ function scrollPageTop(){
   document.body.scrollTop=0;
 }
 function showAppView(view){
-  const swing=view==='swing';
-  const av=$('analysisView'), sv=$('swingView');
-  if(av) av.hidden=swing;
-  if(sv) sv.hidden=!swing;
-  const nav=$('swingNav');
-  if(nav) nav.textContent=swing?'← 個股分析':'🎯 波段選股';
-  scrollPageTop();
-  if(swing&&!swingLoaded){swingLoaded=true;loadSwingRadar();}
+  const av=$('analysisView'), sv=$('swingView'), iv=$('institutionView');
+  if(av)av.hidden=view!=='analysis'; if(sv)sv.hidden=view!=='swing'; if(iv)iv.hidden=view!=='institution';
+  const sn=$('swingNav'), inn=$('instNav'); if(sn)sn.textContent=view==='swing'?'← 個股分析':'🎯 波段選股'; if(inn)inn.textContent=view==='institution'?'← 個股分析':'🏦 法人排行';
+  scrollPageTop(); if(view==='swing'&&!swingLoaded){swingLoaded=true;loadSwingRadar()} if(view==='institution'&&!instRankLoaded)loadInstitutionRank();
 }
-const homeBrand=$('homeBrand');
-if(homeBrand){
-  homeBrand.addEventListener('click',e=>{
-    e.preventDefault();
-    showAppView('analysis');
-    try{history.replaceState(null,'',location.pathname+location.search);}catch(_){}
-  });
-}
-const swingNav=$('swingNav');
-if(swingNav){
-  swingNav.addEventListener('click',()=>{
-    const showingSwing=$('swingView')&&!$('swingView').hidden;
-    showAppView(showingSwing?'analysis':'swing');
-  });
-}
-
+const homeBrand=$('homeBrand');if(homeBrand)homeBrand.addEventListener('click',e=>{e.preventDefault();showAppView('analysis');try{history.replaceState(null,'',location.pathname+location.search)}catch(_){}});
+const swingNav=$('swingNav');if(swingNav)swingNav.addEventListener('click',()=>showAppView($('swingView')&&!$('swingView').hidden?'analysis':'swing'));
+const instNav=$('instNav');if(instNav)instNav.addEventListener('click',()=>showAppView($('institutionView')&&!$('institutionView').hidden?'analysis':'institution'));
 </script>
 </body>
 </html>
