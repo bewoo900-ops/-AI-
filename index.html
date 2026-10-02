@@ -195,10 +195,10 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 </style>
 
 </head>
-<body>
+<body id="home">
 <div class="wrap">
   <header class="top">
-    <div class="brand" id="homeBrand" role="link" tabindex="0" aria-label="回到首頁"><div class="logo">↗</div><div>歡歡的台股 AI 雷達<small>HUANHUAN'S TAIWAN STOCK RADAR</small></div></div>
+    <a class="brand" id="homeBrand" href="#home" aria-label="回到首頁" style="text-decoration:none;color:inherit"><div class="logo">↗</div><div>歡歡的台股 AI 雷達<small>HUANHUAN'S TAIWAN STOCK RADAR</small></div></a>
     <div style="display:flex;gap:8px;align-items:center"><div class="status">♡ 歡歡專屬</div><div class="status" id="dataStatus">等待分析</div></div>
   </header>
 
@@ -929,26 +929,55 @@ function renderSwingRadar(items,status='完成'){
     return `<button class="swing-item" type="button" onclick="openFromScan('${esc(x.code)}')"><div class="swing-rank">${i+1}</div><div class="swing-name"><b>${esc(x.code)} ${esc(x.name)}</b><small>現價 ${fmt(x.price)}｜5日模型 ${fc>=0?'+':''}${fc.toFixed(1)}%｜RSI ${x.rsi.toFixed(0)}</small></div><div class="swing-signal ${cls}"><b>${x.direction}</b><small>波段分數 ${x.score.toFixed(1)}</small></div></button>`;
   }).join('');
 }
+const SWING_POOL=[
+  '2330','2317','2454','2308','2382','3231','6669','2379','3034','3711',
+  '2357','2327','2345','3017','3443','3661','3653','2368','2383','2449',
+  '3105','8358','8069','8299','6488','6274','6223','6147','3260','3324',
+  '2603','2615','2618','2609','2634','2881','2882','2891','2886','2884',
+  '1301','1303','2002','1101','5871','5880','1216','2912'
+];
+const SWING_CACHE_KEY='huanhuan_swing_radar_v3';
+function loadSwingCache(){
+  try{const x=JSON.parse(localStorage.getItem(SWING_CACHE_KEY)||'null');if(x&&Date.now()-x.savedAt<2*60*60*1000&&Array.isArray(x.items)&&x.items.length)return x.items;}catch(e){}return null;
+}
+function saveSwingCache(items){try{localStorage.setItem(SWING_CACHE_KEY,JSON.stringify({savedAt:Date.now(),items}));}catch(e){}}
+async function mapLimit(list,limit,worker){
+  const out=[]; let i=0;
+  async function run(){while(i<list.length){const idx=i++;try{const v=await worker(list[idx],idx);if(v)out.push(v);}catch(e){}}}
+  await Promise.all(Array.from({length:Math.min(limit,list.length)},run));return out;
+}
 async function loadSwingRadar(){
+  const cached=loadSwingCache();
+  if(cached){renderSwingRadar(cached,`已載入最近掃描結果｜${cached.length} 支候選`);return;}
   try{
-    $('swingStatus').textContent='載入近期市場行情…';
+    $('swingStatus').textContent='正在掃描波段候選…';
     await ensureStockDirectory();
-    const end=new Date(), start=new Date(); start.setDate(end.getDate()-150);
-    const rows=await getData('TaiwanStockPrice','',fmtDate(start),fmtDate(end));
-    const grouped=new Map();
-    rows.forEach(r=>{const id=String(r.stock_id||r.code||'').trim(); if(!/^\d{4,6}$/.test(id))return; if(!grouped.has(id))grouped.set(id,[]);grouped.get(id).push(r)});
-    const candidates=[];
-    for(const [code,rs] of grouped){
-      const name=await resolveStockName(code); if(!name)continue;
-      const x=swingSignalScore(rs); if(!x)continue;
-      candidates.push({...x,code,name});
-    }
+    const end=new Date(), start=new Date(); start.setDate(end.getDate()-190);
+    let done=0;
+    const candidates=await mapLimit(SWING_POOL,4,async code=>{
+      try{
+        const rs=await getData('TaiwanStockPrice',code,fmtDate(start),fmtDate(end));
+        done++; if(done%4===0)$('swingStatus').textContent=`正在分析 ${done}/${SWING_POOL.length}…`;
+        const x=swingSignalScore(rs); if(!x)return null;
+        const name=(await resolveStockName(code))||names[code]||code;
+        return {...x,code,name};
+      }catch(e){done++;return null;}
+    });
     candidates.sort((a,b)=>Math.abs(b.score)-Math.abs(a.score));
     const top=candidates.slice(0,10);
-    renderSwingRadar(top,`已掃描 ${candidates.length.toLocaleString()} 檔｜更新 ${new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`);
+    if(!top.length)throw new Error('候選資料不足');
+    saveSwingCache(top);
+    renderSwingRadar(top,`已分析 ${candidates.length} 檔有效候選｜每 2 小時更新`);
   }catch(e){
-    renderSwingRadar([],'市場資料暫時無法取得');
+    renderSwingRadar([],'波段資料暫時無法取得');
   }
+}
+
+function openFromScan(code){
+  const input=$('stock'); if(input)input.value=code;
+  loadStock(code);
+  const target=document.querySelector('.stock-card')||document.querySelector('#result')||document.querySelector('.analysis');
+  if(target)setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),120);
 }
 
 function forecastFeatures(rows,t){
@@ -1071,13 +1100,13 @@ function renderForecast(rows){
   setText('fcReason',`以 ${rows.at(-1).date} 的型態與過去相似交易日比較：5日報酬中位數 ${pc(p5.median)}，歷史中 5日上漲比例約 ${prob.toFixed(0)}%。預估價格約 ${price(p5.median)}；20日中位數報酬 ${pc(p20.median)}。近期樣本的方向命中率約 ${Number.isFinite(hit)?(hit*100).toFixed(0)+'%':'無法估算'}，僅代表這套規則在最近歷史資料上的回測表現。`);
 }
 
-// 網站標題同時作為首頁導覽：點擊或鍵盤 Enter / Space 平滑回到頁首。
+// 標題本身是原生 #home 連結；JS 只負責加上平滑捲動，停用 JS 時仍可回首頁。
 const homeBrand=$('homeBrand');
 if(homeBrand){
-  const goHome=()=>window.scrollTo({top:0,behavior:'smooth'});
-  homeBrand.addEventListener('click',goHome);
-  homeBrand.addEventListener('keydown',e=>{
-    if(e.key==='Enter'||e.key===' '){e.preventDefault();goHome();}
+  homeBrand.addEventListener('click',e=>{
+    e.preventDefault();
+    document.getElementById('home')?.scrollIntoView({behavior:'smooth',block:'start'});
+    history.replaceState(null,'',location.pathname+location.search+'#home');
   });
 }
 
