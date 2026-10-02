@@ -63,6 +63,29 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 .navrow a{text-decoration:none;color:#9bb6c8;border:1px solid #1b405a;background:#0b2135;padding:8px 11px;border-radius:99px;font-size:11px;white-space:nowrap}
 .navrow a:hover{color:#fff;border-color:#2b6a8d}
 @media(max-width:850px){.personal{grid-template-columns:repeat(2,1fr)}}
+
+/* 預測中心：以歷史相似型態做機率與區間估計，不宣稱保證漲跌 */
+.forecast-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.forecast-box{background:linear-gradient(135deg,#0b2235,#0a1727);border:1px solid #1e5470;border-radius:16px;padding:14px}
+.forecast-box small{display:block;color:#86a6b9;font-size:11px}
+.forecast-box strong{display:block;font-size:25px;margin-top:6px;color:#eaf8ff}
+.forecast-box span{display:block;margin-top:5px;color:#91b1c2;font-size:11px}
+.forecast-box.up strong{color:#51e0bd}.forecast-box.down strong{color:#ff7890}.forecast-box.neutral strong{color:#ffd76a}
+.forecast-main{display:grid;grid-template-columns:1.4fr .8fr;gap:14px;margin-top:12px}
+.forecast-panel{background:#081827;border:1px solid #173d57;border-radius:16px;padding:14px}
+.forecast-bar{height:12px;border-radius:99px;background:#152c3e;overflow:hidden;margin:8px 0}
+.forecast-bar i{display:block;height:100%;background:linear-gradient(90deg,#ff6684,#ffd76a,#39dfba);width:50%}
+.forecast-kv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.forecast-kv div{padding:10px;border:1px solid #17384f;border-radius:12px}
+.forecast-kv small{color:#7895a9}.forecast-kv b{display:block;margin-top:4px}
+.forecast-note{margin-top:10px;color:#7895a9;font-size:11px;line-height:1.55}
+.forecast-status{display:inline-block;padding:5px 10px;border-radius:99px;font-size:12px;background:#183247}
+.forecast-status.up{background:#10382f;color:#63e5c2}.forecast-status.down{background:#421c27;color:#ff8aa0}.forecast-status.neutral{background:#3d3517;color:#ffdc73}
+@media(max-width:850px){
+  .forecast-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .forecast-main{grid-template-columns:1fr}
+}
+
 </style>
 
 <style id="search-name-input-style">
@@ -152,6 +175,17 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 @media(max-width:850px){.us-chart-grid{grid-template-columns:1fr}}
 </style>
 
+
+<style id="forecast-backtest-style">
+.backtest-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px}
+.backtest-box{background:#0a1d30;border:1px solid #173d57;border-radius:13px;padding:12px}
+.backtest-box small{display:block;color:#7895a9;font-size:10px}
+.backtest-box b{display:block;font-size:20px;margin-top:5px}
+.backtest-box span{display:block;color:#8ea8b9;font-size:10px;margin-top:4px;line-height:1.45}
+.backtest-note{margin-top:10px;color:#718da2;font-size:10px;line-height:1.65}
+@media(max-width:850px){.backtest-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+
 </head>
 <body>
 <div class="wrap">
@@ -199,16 +233,13 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
     
 <div class="personal">
   <div class="pbox"><small>♡ 我的自選股</small><b id="watchCount">0 檔</b></div>
-  <div class="pbox"><small>🔎 今日掃描</small><b id="scanCount">尚未掃描</b></div>
   <div class="pbox"><small>🎯 目前分析</small><b id="currentStock">尚未選擇</b></div>
-  <div class="pbox"><small>⚖️ 風控上限</small><b id="riskDisplay">2%</b></div>
-</div>
+  </div>
 <div class="navrow">
-  <a href="#dashboard">個股分析</a><a href="#myWatchlist">我的自選</a><a href="#scanner">全市場掃描</a>
+  <a href="#dashboard">個股分析</a><a href="#myWatchlist">我的自選</a>
 </div>
 
     <div class="settings">
-      <button class="chip" id="resetRisk" type="button">↺ 重設資金參數</button>
       <input id="token" type="password" placeholder="可選：FinMind Token（留空先嘗試公開資料）">
       <span>Token 只會存在這個瀏覽器分頁，不會寫入網站。</span>
     </div>
@@ -255,12 +286,14 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
     </section>
 
     <section class="card">
-      <div class="sectionTitle"><h2>📍 交易計畫</h2><span>依 ATR / 支撐壓力計算</span></div>
+      <div class="sectionTitle"><h2>📍 交易計畫</h2><span>技術壓力與模型預測分開</span></div>
       <div class="plan">
         <div class="level"><small>觀察／進場區</small><b id="entry">—</b><em id="entryNote">—</em></div>
         <div class="level"><small>風控停損</small><b class="down" id="stop">—</b><em id="stopNote">—</em></div>
-        <div class="level"><small>第一目標</small><b class="up" id="target1">—</b><em id="target1Note">—</em></div>
-        <div class="level"><small>第二目標</small><b class="up" id="target2">—</b><em id="target2Note">—</em></div>
+        <div class="level"><small>技術第一壓力</small><b class="up" id="target1">—</b><em id="target1Note">前波壓力</em></div>
+        <div class="level"><small>技術第二壓力</small><b class="up" id="target2">—</b><em id="target2Note">近 60 日高點</em></div>
+        <div class="level"><small>5日模型預測價</small><b class="up" id="planFc5">—</b><em id="planFc5Note">歷史相似型態</em></div>
+        <div class="level"><small>20日模型預測價</small><b class="up" id="planFc20">—</b><em id="planFc20Note">歷史相似型態</em></div>
         <div class="level"><small>風險 / 報酬</small><b id="rr">—</b><em>以進場中位數估算</em></div>
         <div class="level"><small>距離前高</small><b id="fromHigh">—</b><em>近 120 交易日</em></div>
       </div>
@@ -277,27 +310,7 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
         <div class="metric"><small>成交量 / 20日均量</small><strong id="volRatio">—</strong></div>
       </div>
     </section>
-
-    <section class="card">
-      <div class="sectionTitle"><h2>💵 資金管理</h2><span>依你的風險上限計算</span></div>
-      <div class="position-box">
-        <div class="position-grid">
-          <div><label>投入資金（元）</label><input id="capital" type="number" value="500000" min="0" step="10000"></div>
-          <div><label>單筆最大風險（%）</label><input id="riskPct" type="number" value="2" min="0.1" max="10" step="0.1"></div>
-          <div><label>預計進場價</label><input id="customEntry" type="number" step="0.1" placeholder="自動帶入"></div>
-          <div><label>預計停損價</label><input id="customStop" type="number" step="0.1" placeholder="自動帶入"></div>
-        </div>
-        <div class="position-result">
-          <div class="metric"><small>建議張數</small><strong id="shares">—</strong></div>
-          <div class="metric"><small>最大可承受損失</small><strong id="maxLoss">—</strong></div>
-          <div class="metric"><small>實際投入金額</small><strong id="usedCapital">—</strong></div>
-          <div class="metric"><small>單張停損風險</small><strong id="riskPerLot">—</strong></div>
-        </div>
-      </div>
-      <div class="warning">這是風險管理計算器，不是自動下單建議；實際成交價、手續費、交易稅與滑價都可能造成差異。</div>
-    </section>
-
-    <section class="card">
+<section class="card">
       <div class="sectionTitle"><h2>🧱 支撐與壓力</h2><span>近 60 日</span></div>
       <table class="table">
         <tr><th>類型</th><th>價格</th><th>距離</th><th>意義</th></tr>
@@ -392,50 +405,55 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
       </div>
       <div class="ref-note">法說會日期與內容以公司及 TWSE／MOPS 公告為準；網站不把法說會內容自動解讀成「利多」或「利空」。</div>
     </section>
+<section class="card wide" id="forecastCenter">
+  <div class="sectionTitle">
+    <h2>🎯 漲幅預測中心</h2>
+    <span>歷史相似型態機率模型</span>
+  </div>
+  <div class="forecast-grid">
+    <div class="forecast-box" id="fc1Box"><small>下一交易日預估</small><strong id="fc1">—</strong><span id="fc1Range">—</span></div>
+    <div class="forecast-box" id="fc5Box"><small>5 交易日預估</small><strong id="fc5">—</strong><span id="fc5Range">—</span></div>
+    <div class="forecast-box" id="fc20Box"><small>20 交易日預估</small><strong id="fc20">—</strong><span id="fc20Range">—</span></div>
+    <div class="forecast-box"><small>5日上漲機率</small><strong id="fcProb">—</strong><span id="fcConfidence">模型信心：—</span></div>
+  </div>
+  <div class="forecast-main">
+    <div class="forecast-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <b>目前模型判讀</b><span id="fcStatus" class="forecast-status neutral">等待資料</span>
+      </div>
+      <div class="forecast-kv" style="margin-top:10px">
+        <div><small>5日預估價格</small><b id="fc5Price">—</b></div>
+        <div><small>20日預估價格</small><b id="fc20Price">—</b></div>
+        <div><small>歷史相似樣本</small><b id="fcSamples">—</b></div>
+        <div><small>5日方向命中率</small><b id="fcHit">—</b></div>
+      </div>
+      <div class="forecast-note" id="fcReason">輸入股票後，系統會用歷史價格、均線、RSI、MACD、波動與成交量尋找相似型態，再估算未來 1／5／20 個交易日的報酬分布。</div>
+    </div>
+    <div class="forecast-panel">
+      <b>📐 預測區間</b>
+      <div style="margin-top:12px;color:#91b1c2;font-size:12px">5日上漲機率</div>
+      <div class="forecast-bar"><i id="fcProbBar" style="width:50%"></i></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#7895a9"><span>0%</span><b id="fcProbText">—</b><span>100%</span></div>
+      <div class="forecast-note">這裡顯示的是「條件機率與歷史區間」，不是保證漲幅。模型會同時顯示中位數與 25%～75% 的歷史結果，避免只給單一神奇數字。</div>
+    </div>
+  </div>
+  <div class="forecast-panel" style="margin-top:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <b>🧪 歷史回測：這套模型過去有多準？</b>
+      <span id="btN" class="forecast-status neutral">等待資料</span>
+    </div>
+    <div class="backtest-grid">
+      <div class="backtest-box"><small>方向預測命中率</small><b id="btDirection">—</b><span>預測漲／跌方向是否正確</span></div>
+      <div class="backtest-box"><small>實際漲幅落在區間</small><b id="btRange">—</b><span>實際結果是否落在模型 25～75% 區間</span></div>
+      <div class="backtest-box"><small>預測誤差 MAE</small><b id="btMAE">—</b><span>預測報酬與實際報酬的平均絕對差</span></div>
+      <div class="backtest-box"><small>漲幅 ≥ 3% 命中</small><b id="bt3">—</b><span>模型預測達到 3% 時，實際是否達標</span></div>
+      <div class="backtest-box"><small>漲幅 ≥ 5% 命中</small><b id="bt5">—</b><span>模型預測達到 5% 時，實際是否達標</span></div>
+    </div>
+    <div class="backtest-note" id="btNote">回測採「走一步、預測一步」方式，只使用當時已經發生的資料，不把未來價格拿回去訓練。數字是這套規則在歷史資料上的表現，不代表未來一定會一樣。</div>
+  </div>
+</section>
 
-    <section class="card">
-      <div class="sectionTitle"><h2>🇺🇸 美股／海外市場參考</h2><span>聯動觀察</span></div>
-      <div class="us-grid">
-        <div class="us-box"><small>S&P 500</small><strong id="usSP">—</strong><span>^GSPC</span></div>
-        <div class="us-box"><small>NASDAQ</small><strong id="usND">—</strong><span>^IXIC</span></div>
-        <div class="us-box"><small>Dow Jones</small><strong id="usDJ">—</strong><span>^DJI</span></div>
-        <div class="us-box"><small>VIX</small><strong id="usVIX">—</strong><span>^VIX</span></div>
-      </div>
-      <div class="inst-opinion"><b>海外參考：</b><span id="usOpinion">讀取美股資料中；若瀏覽器或資料來源限制，仍可使用下面市場連結查詢。</span></div>
-      <div class="us-chart-grid">
-        <div class="us-chart-card">
-          <div class="us-chart-head"><strong>S&P 500 當日走勢</strong><span id="usSPTime">—</span></div>
-          <canvas id="usSPChart" class="us-chart-canvas"></canvas>
-        </div>
-        <div class="us-chart-card">
-          <div class="us-chart-head"><strong>NASDAQ 當日走勢</strong><span id="usNDTime">—</span></div>
-          <canvas id="usNDChart" class="us-chart-canvas"></canvas>
-        </div>
-        <div class="us-chart-card">
-          <div class="us-chart-head"><strong>Dow Jones 當日走勢</strong><span id="usDJTime">—</span></div>
-          <canvas id="usDJChart" class="us-chart-canvas"></canvas>
-        </div>
-        <div class="us-chart-card">
-          <div class="us-chart-head"><strong>VIX 當日走勢</strong><span id="usVIXTime">—</span></div>
-          <canvas id="usVIXChart" class="us-chart-canvas"></canvas>
-        </div>
-      </div>
-      <div class="event-grid" style="margin-top:10px">
-        <div class="event-card">
-          <h3>美股指數</h3>
-          <p>S&P 500、Nasdaq、Dow Jones 與 VIX 可作為隔日台股風險情緒的背景參考。</p>
-          <a class="event-link" href="https://finance.yahoo.com/markets/indices/" target="_blank" rel="noopener">查看 Yahoo Finance 指數 ↗</a>
-        </div>
-        <div class="event-card">
-          <h3>半導體／科技</h3>
-          <p>若查詢的是電子、AI、半導體股，可同步留意 Nasdaq、SOX／半導體類股與大型科技股表現。</p>
-          <a class="event-link" href="https://finance.yahoo.com/markets/stocks/" target="_blank" rel="noopener">查看美股市場 ↗</a>
-        </div>
-      </div>
-      <div class="ref-note">海外市場只作背景參考，不直接等同台股隔日走勢。</div>
-    </section>
-
-    <section class="card ai wide">
+<section class="card ai wide">
       <div class="sectionTitle"><h2>🤖 自動分析摘要</h2><span>由規則引擎生成</span></div>
       <p id="aiText">輸入股票後開始分析。</p>
     </section>
@@ -447,31 +465,7 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
   <div id="watchItems" class="tools"></div>
   <div class="warning">點擊股票即可進入完整分析。自選股只儲存在目前瀏覽器，不會上傳。</div>
 </section>
-
-<section class="card scanner" id="scanner">
-  <div class="scanner-head">
-    <div>
-      <div class="sectionTitle" style="margin-bottom:2px"><h2>🔎 全台股票掃描器</h2><span>規則化篩選</span></div>
-      <p>從股票池中找出「趨勢、動能、成交量、位置與風險報酬」同時符合條件的標的，再逐支打開完整分析。</p>
-    </div>
-    <button class="scanbtn" id="scanBtn">開始掃描</button>
-  </div>
-  <div class="scan-controls">
-    <div><label>最低技術分數</label><input id="minScore" type="number" value="65" min="0" max="100"></div>
-    <div><label>最低量能倍數</label><input id="minVol" type="number" value="1.1" min="0" step="0.1"></div>
-    <div><label>最低風險報酬 R</label><input id="minRR" type="number" value="1.5" min="0" step="0.1"></div>
-    <div><label>趨勢條件</label><select id="trendFilter"><option value="all">不限</option><option value="bull">MA20 > MA60</option><option value="above20">股價 > MA20</option></select></div>
-  </div>
-  <div class="scan-summary" id="scanSummary">
-    <span class="scan-badge">尚未掃描</span>
-  </div>
-  <div class="scan-scroll">
-    <div id="scanResults" class="scan-empty">按「開始掃描」後，系統會依目前條件分析股票池。</div>
-  </div>
-  <div class="scan-note">掃描結果只是技術條件篩選，不是「必漲名單」。全市場掃描器目前仍使用內建股票池；個股查詢則可直接輸入代號。法人區會另外呈現外資、投信與自營商的近期買賣動向，並把 API 放到後端避免瀏覽器跨網域限制。</div>
-</section>
-
-  <div class="footer">⚠️ 歡歡專屬分析工具：所有進場、停損、目標與分數都是依歷史資料與規則計算的研究參考，不代表未來報酬或保證獲利。<br>台股雷達 Demo · 歷史資料分析不代表未來走勢 · 上市、上櫃與興櫃資料欄位定義可能不同</div>
+<div class="footer">⚠️ 歡歡專屬分析工具：所有進場、停損、目標與分數都是依歷史資料與規則計算的研究參考，不代表未來報酬或保證獲利。<br>台股雷達 Demo · 歷史資料分析不代表未來走勢 · 上市、上櫃與興櫃資料欄位定義可能不同</div>
 </div>
 
 <script>
@@ -484,36 +478,66 @@ const names={
 };
 const aliases={};
 const stockDirectory=new Map();
+const DIRECTORY_CACHE_KEY='huanhuan_stock_directory_v2';
+const DIRECTORY_URLS=[
+  'https://raw.githubusercontent.com/Chill0237/tw_stock_dashboard/main/docs/api/stock/index.json',
+  'https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockInfo'
+];
 Object.entries(names).forEach(([id,name])=>{aliases[name]=id;aliases[name.replace(/台灣|股份有限公司|公司/g,'')]=id;stockDirectory.set(id,{stock_id:id,stock_name:name,type:'twse'});});
 let directoryLoaded=false;
 function cleanName(s){return String(s||'').trim().replace(/\s+/g,'');}
-async function loadStockDirectory(){
-  try{
-    const rows=await getData('TaiwanStockInfo');
-    const latest=new Map();
-    rows.forEach(r=>{
-      const id=String(r.stock_id||'').trim(), type=String(r.type||'');
-      if(!id || !['twse','tpex'].includes(type)) return;
-      const old=latest.get(id);
-      if(!old || String(r.date||'')>String(old.date||'')) latest.set(id,r);
-    });
-    latest.forEach((r,id)=>{
-      stockDirectory.set(id,r);
-      if(r.stock_name){
-        names[id]=r.stock_name;
-        const n=cleanName(r.stock_name);
-        aliases[n]=id;
-        aliases[n.replace(/台灣|股份有限公司|公司/g,'')]=id;
-      }
-    });
-    directoryLoaded=true;
-    setText('directoryStatus',`已載入 ${latest.size.toLocaleString()} 檔上市／上櫃股票名稱`);
-    return true;
-  }catch(e){
-    setText('directoryStatus','股票名稱清單暫時無法更新，仍可輸入代號查詢');
-    return false;
-  }
+function addDirectoryRows(rows){
+  if(!Array.isArray(rows)) return 0;
+  let count=0;
+  rows.forEach(r=>{
+    const id=String(r.stock_id||r.code||r.symbol||r.stock_code||'').trim();
+    const name=String(r.stock_name||r.name||r.stockName||r.security_name||'').trim();
+    if(!id || !name || !/^\d{4,6}$/.test(id)) return;
+    const market=String(r.type||r.market||r.exchange||'').toLowerCase();
+    if(market && !['twse','tpex','twse/tpex','上市','上櫃','listed','otc'].some(x=>market.includes(x))) return;
+    const item={...r,stock_id:id,stock_name:name};
+    stockDirectory.set(id,item); names[id]=name;
+    const n=cleanName(name).toLowerCase();
+    aliases[n]=id;
+    aliases[n.replace(/台灣|股份有限公司|公司/g,'')]=id;
+    count++;
+  });
+  return count;
 }
+function directorySnapshot(){return [...stockDirectory.values()].filter(r=>r?.stock_id&&r?.stock_name).map(r=>({stock_id:String(r.stock_id),stock_name:r.stock_name,type:r.type||r.market||''}));}
+function saveDirectoryCache(){try{localStorage.setItem(DIRECTORY_CACHE_KEY,JSON.stringify({savedAt:Date.now(),rows:directorySnapshot()}));}catch(e){}}
+function loadDirectoryCache(){
+  try{
+    const raw=localStorage.getItem(DIRECTORY_CACHE_KEY); if(!raw)return 0;
+    const obj=JSON.parse(raw); const rows=obj?.rows||[];
+    return addDirectoryRows(rows);
+  }catch(e){return 0}
+}
+function parseDirectoryPayload(payload){
+  if(Array.isArray(payload)) return payload;
+  if(payload?.data && Array.isArray(payload.data)) return payload.data;
+  if(payload?.stocks && Array.isArray(payload.stocks)) return payload.stocks;
+  if(payload && typeof payload==='object'){
+    return Object.entries(payload).map(([code,v])=>({stock_id:code,stock_name:typeof v==='string'?v:(v?.stock_name||v?.name||'')}));
+  }
+  return [];
+}
+async function loadStockDirectory(){
+  const cached=loadDirectoryCache();
+  if(cached>100){directoryLoaded=true;setText('directoryStatus',`已載入 ${stockDirectory.size.toLocaleString()} 檔股票名稱（瀏覽器快取）`);}
+  for(const url of DIRECTORY_URLS){
+    try{
+      const r=await fetch(url,{cache:'no-store'}); if(!r.ok)continue;
+      const payload=await r.json();
+      const rows=parseDirectoryPayload(payload); const added=addDirectoryRows(rows);
+      if(added>100){directoryLoaded=true;saveDirectoryCache();setText('directoryStatus',`已載入 ${stockDirectory.size.toLocaleString()} 檔上市／上櫃股票名稱`);return true;}
+    }catch(e){}
+  }
+  if(stockDirectory.size>100){directoryLoaded=true;setText('directoryStatus',`已載入 ${stockDirectory.size.toLocaleString()} 檔股票名稱（快取）`);return true;}
+  setText('directoryStatus','股票名稱資料暫時無法連線，請稍候再試');
+  return false;
+}
+async function ensureStockDirectory(){if(directoryLoaded&&stockDirectory.size>100)return true;return await loadStockDirectory();}
 function findStockIdByName(raw){
   const q=cleanName(raw).toLowerCase();
   if(!q) return '';
@@ -524,23 +548,26 @@ function findStockIdByName(raw){
   }
   return '';
 }
-function normalizeStockInput(raw){
+async function normalizeStockInput(raw){
   const s=String(raw||'').trim();
   if(!s) return '';
+  await ensureStockDirectory();
   if(/^\d{4,6}$/.test(s)) return s;
   return findStockIdByName(s)||aliases[s]||'';
 }
 async function resolveStockName(id){
-  if(names[id]) return names[id];
-  const r=stockDirectory.get(String(id));
+  id=String(id||'').trim();
+  await ensureStockDirectory();
+  if(names[id] && !/^台股 \d+$/.test(names[id])) return names[id];
+  const r=stockDirectory.get(id);
   if(r?.stock_name){names[id]=r.stock_name;return r.stock_name;}
   try{
     const rows=await getData('TaiwanStockInfo',id);
-    const rr=rows?.find(x=>String(x.stock_id||'')===String(id))||rows?.at(-1);
+    const rr=rows?.find(x=>String(x.stock_id||'')===id)||rows?.at(-1);
     const n=rr?.stock_name||rr?.stock_name_ch||rr?.name||rr?.公司簡稱||rr?.公司名稱;
-    if(n){names[id]=n;aliases[cleanName(n)]=id;stockDirectory.set(String(id),rr);return n;}
+    if(n){names[id]=n;aliases[cleanName(n).toLowerCase()]=id;stockDirectory.set(id,{...rr,stock_id:id,stock_name:n});saveDirectoryCache();return n;}
   }catch(e){}
-  return '台股 '+id;
+  return '';
 }
 const $=id=>document.getElementById(id);
 const fmt=(n,d=2)=>Number.isFinite(n)?n.toFixed(d):'—';
@@ -587,108 +614,6 @@ function updateSeasonality(){
 function updateEventCompany(id){
   setText('eventCompany','股票 '+id+'｜法說會／公司事件');
 }
-async function fetchUSQuote(symbol){
-  const url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(symbol)+'?range=5d&interval=1d';
-  const r=await fetch(url);
-  if(!r.ok) throw new Error('US quote '+r.status);
-  const j=await r.json();
-  const result=j.chart.result?.[0];
-  const m=result?.meta||{};
-  const q=m.regularMarketPrice, prev=m.chartPreviousClose||m.previousClose;
-  return {price:q,chg:prev?((q-prev)/prev*100):null};
-}
-
-async function fetchUSIntraday(symbol){
-  const url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(symbol)+'?range=1d&interval=5m&includePrePost=false';
-  const r=await fetch(url);
-  if(!r.ok) throw new Error('US intraday '+r.status);
-  const j=await r.json();
-  const result=j.chart.result?.[0];
-  if(!result) throw new Error('No intraday result');
-  const q=result.indicators?.quote?.[0]||{};
-  const ts=result.timestamp||[];
-  const points=[];
-  for(let i=0;i<ts.length;i++){
-    const v=q.close?.[i];
-    if(v!=null && Number.isFinite(+v)) points.push({t:ts[i]*1000,v:+v});
-  }
-  return {points,meta:result.meta||{}};
-}
-
-function usText(x){
-  if(!x||x.price==null) return '—';
-  return x.price.toLocaleString('en-US',{maximumFractionDigits:2})+(x.chg==null?'':(' '+(x.chg>=0?'+':'')+x.chg.toFixed(2)+'%'));
-}
-
-function drawUSChart(canvasId, points, timeId){
-  const canvas=$(canvasId);
-  if(!canvas) return;
-  const wrap=canvas.parentElement;
-  const dpr=window.devicePixelRatio||1;
-  const w=Math.max(280,wrap.clientWidth-24), h=145;
-  canvas.width=w*dpr; canvas.height=h*dpr; canvas.style.width=w+'px'; canvas.style.height=h+'px';
-  const ctx=canvas.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
-  ctx.clearRect(0,0,w,h);
-  if(!points?.length){
-    canvas.style.display='none';
-    let empty=wrap.querySelector('.us-chart-empty');
-    if(!empty){empty=document.createElement('div');empty.className='us-chart-empty';wrap.appendChild(empty);}
-    empty.textContent='目前無法取得當日盤中資料\\n可用下方市場連結查看最新走勢。';
-    return;
-  }
-  const empty=wrap.querySelector('.us-chart-empty'); if(empty) empty.remove();
-  canvas.style.display='block';
-  const vals=points.map(p=>p.v), min=Math.min(...vals), max=Math.max(...vals);
-  const pad={l:8,r:8,t:10,b:22};
-  const iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
-  const range=(max-min)||Math.max(Math.abs(max)*0.001,1);
-  const x=i=>pad.l+(i/(points.length-1||1))*iw;
-  const y=v=>pad.t+(max-v)/range*ih;
-  ctx.strokeStyle='rgba(120,160,190,.18)'; ctx.lineWidth=1;
-  for(let i=0;i<4;i++){const gy=pad.t+i*ih/3;ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(w-pad.r,gy);ctx.stroke();}
-  ctx.beginPath();
-  points.forEach((p,i)=>{const px=x(i),py=y(p.v);if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);});
-  ctx.strokeStyle=vals[vals.length-1]>=vals[0]?'#42e8c4':'#ff6b7a'; ctx.lineWidth=2.2; ctx.stroke();
-  ctx.lineTo(x(points.length-1),h-pad.b);ctx.lineTo(x(0),h-pad.b);ctx.closePath();
-  ctx.fillStyle=vals[vals.length-1]>=vals[0]?'rgba(66,232,196,.08)':'rgba(255,107,122,.08)';ctx.fill();
-  ctx.fillStyle='#7895a9';ctx.font='11px system-ui,sans-serif';
-  ctx.fillText(max.toLocaleString('en-US',{maximumFractionDigits:2}),pad.l,11);
-  ctx.fillText(min.toLocaleString('en-US',{maximumFractionDigits:2}),pad.l,h-5);
-  const last=points[points.length-1].t;
-  const dt=new Date(last);
-  const label=dt.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:false});
-  const te=$(timeId); if(te) te.textContent='最後資料 '+label;
-}
-
-async function updateUSMarket(){
-  const map=[['usSP','^GSPC'],['usND','^IXIC'],['usDJ','^DJI'],['usVIX','^VIX']];
-  try{
-    const vals=await Promise.all(map.map(x=>fetchUSQuote(x[1])));
-    vals.forEach((v,i)=>setText(map[i][0],usText(v)));
-    const vix=vals[3]?.price;
-    setText('usOpinion',vix!=null?(vix>=25?'VIX 偏高，台股風險情緒可多留意波動。':vix>=20?'VIX 位於偏高區間，留意盤勢波動。':'VIX 相對平穩，可再搭配 Nasdaq／半導體表現觀察。'):'美股資料已載入。');
-  }catch(e){
-    setText('usOpinion','目前瀏覽器無法直接取得美股即時資料；下方走勢圖也可能因資料來源限制而無法顯示。');
-  }
-
-  const charts=[
-    ['^GSPC','usSPChart','usSPTime'],
-    ['^IXIC','usNDChart','usNDTime'],
-    ['^DJI','usDJChart','usDJTime'],
-    ['^VIX','usVIXChart','usVIXTime']
-  ];
-  await Promise.all(charts.map(async c=>{
-    try{
-      const data=await fetchUSIntraday(c[0]);
-      drawUSChart(c[1],data.points,c[2]);
-    }catch(e){
-      drawUSChart(c[1],[],c[2]);
-    }
-  }));
-}
-
-
-
 function fmtSignedK(n){
   const sign=n>0?'+':n<0?'−':'';
   const abs=Math.abs(n);
@@ -762,7 +687,7 @@ function setText(id,v){$(id).textContent=v}
 function distance(cur,x){return pct((x/cur-1)*100)}
 function updateSummaryBase(rows,cur,prev,pos,score,label){
   const id=rows.at(-1)?.stock_id||$('sym').textContent;
-  const name=names[id]||('台股 '+id);
+  const name=names[id]||'名稱同步中';
   setText('sumCompany',id+' '+name);
   setText('sumPrice',fmt(cur));
   setText('sumChange',(cur>=prev?'▲ ':'▼ ')+pct((cur/prev-1)*100));
@@ -786,7 +711,7 @@ function analyze(rows){
   const recentHigh=Math.max(...last120.map(x=>+x.max));
   const entryLow=Math.max(sup1,cur-0.75*aatr),entryHigh=Math.min(cur+0.15*aatr,res1);
   const stop=Math.min(sup2,entryLow-1.1*aatr);
-  const target1=res1, target2=Math.max(res2,cur+2.4*aatr);
+  const target1=res1, target2=res2;
   const entry=(entryLow+entryHigh)/2;
   const risk=Math.max(entry-stop,.01), rr=Math.min((target1-entry)/risk,(target2-entry)/risk);
   let score=50, reasons=[];
@@ -800,59 +725,24 @@ function analyze(rows){
   let cls=score>=60?'up':score<45?'down':'neutral';
   $('scoreCircle').style.setProperty('--deg',(score/100*360)+'deg');setText('score',score);setText('signal',label);$('signal').className=cls;
   setText('signalWhy',reasons.slice(0,4).join(' · '));
-  setText('sym',rows.at(-1).stock_id);setText('name',names[rows.at(-1).stock_id]||('台股 '+rows.at(-1).stock_id));refreshWatchButton();
+  setText('sym',rows.at(-1).stock_id);setText('name',names[rows.at(-1).stock_id]||'名稱同步中');refreshWatchButton();
   $('price').innerHTML=fmt(cur)+' <span class="'+(cur>=prev?'up':'down')+'" style="font-size:14px">'+(cur>=prev?'▲ ':'▼ ')+pct((cur/prev-1)*100)+'</span>';
   $('trendPill').textContent=label;$('trendPill').style.background=score>=60?'#10352e':score<45?'#3b1820':'#3b3313';
   setText('rsi',fmt(rrsi,1));setText('macd',fmt(macd));setText('ma20',fmt(m20));setText('ma60',fmt(m60));setText('atr',fmt(aatr));setText('volRatio',fmt(vr,2)+'x');
-  setText('entry',fmt(entryLow)+' ~ '+fmt(entryHigh));latestPlan={entry:(entryLow+entryHigh)/2,stop:stop,price:cur};if(!$('customEntry').value)$('customEntry').value=fmt((entryLow+entryHigh)/2);if(!$('customStop').value)$('customStop').value=fmt(stop);updatePosition();setText('entryNote',entryLow<=cur?'靠近現價／回測區':'等待回落至區間');
+  setText('entry',fmt(entryLow)+' ~ '+fmt(entryHigh));setText('entryNote',entryLow<=cur?'靠近現價／回測區':'等待回落至區間');
   setText('stop',fmt(stop));setText('stopNote','跌破此區代表原先邏輯失效');
   setText('target1',fmt(target1));setText('target1Note',distance(cur,target1)+' / 前波壓力');
-  setText('target2',fmt(target2));setText('target2Note',distance(cur,target2)+' / ATR延伸');
+  setText('target2',fmt(target2));setText('target2Note',distance(cur,target2)+' / 近60日高點');
   setText('rr',rr.toFixed(2)+'R');setText('fromHigh',distance(cur,recentHigh));
   setText('res2',fmt(res2));setText('res2d',distance(cur,res2));setText('res1',fmt(res1));setText('res1d',distance(cur,res1));setText('now',fmt(cur));setText('sup1',fmt(sup1));setText('sup1d',distance(cur,sup1));setText('sup2',fmt(sup2));setText('sup2d',distance(cur,sup2));
   drawChart(rows.slice(-120),sma(close.slice(-120),20),sma(close.slice(-120),60));
   const pos=cur>m20&&m20>m60?'多頭排列':cur<m20&&m20<m60?'空頭排列':'整理階段';
   const rrText=rr>1.5?'風險報酬條件較完整':rr>1?'仍可觀察但空間有限':'目標空間相對有限';
-  setText('aiText',`${rows.at(-1).date} 收盤 ${fmt(cur)}。目前屬「${pos}」，RSI ${fmt(rrsi,1)}、MACD ${fmt(macd)}、成交量約為20日均量 ${fmt(vr,2)} 倍。系統把 ${fmt(entryLow)}～${fmt(entryHigh)} 視為觀察／進場區，${fmt(stop)} 為風控參考，第一目標約 ${fmt(target1)}、第二目標約 ${fmt(target2)}；估算風險報酬約 ${rr.toFixed(2)}R。${rrText}。`);
+  setText('aiText',`${rows.at(-1).date} 收盤 ${fmt(cur)}。目前屬「${pos}」，RSI ${fmt(rrsi,1)}、MACD ${fmt(macd)}、成交量約為20日均量 ${fmt(vr,2)} 倍。技術壓力分為第一壓力 ${fmt(target1)}、第二壓力 ${fmt(target2)}；${fmt(entryLow)}～${fmt(entryHigh)} 為觀察／進場區，${fmt(stop)} 為風控參考。模型預測價格會另外在下方以歷史相似型態計算，不與技術壓力混用。估算風險報酬約 ${rr.toFixed(2)}R。${rrText}。`);
   updateSummaryBase(rows,cur,prev,pos,score,label);
   $('summaryTags').innerHTML=''; addSummaryTag(pos); addSummaryTag('RSI '+fmt(rrsi,1)); addSummaryTag('成交量 '+fmt(vr,2)+'x 20日均量');
   return {rows,cur};
 }
-
-let latestPlan={entry:NaN,stop:NaN,price:NaN};
-function updatePosition(){
-  const capital=+$('capital').value||0, riskPct=+$('riskPct').value||0;
-  const entry=(+$('customEntry').value)||latestPlan.entry||latestPlan.price;
-  const stop=(+$('customStop').value)||latestPlan.stop;
-  const maxLoss=capital>0&&riskPct>0 ? capital*riskPct/100 : 0;
-
-  // 最大可承受損失只跟資金與風險%有關，沒有股票資料也應該能先算出來。
-  setText('maxLoss',maxLoss>0?'NT$ '+Math.round(maxLoss).toLocaleString():'—');
-
-  if(!(capital>0&&riskPct>0&&entry>0&&stop>0&&entry>stop)){
-    setText('shares','—');
-    setText('usedCapital','—');
-    setText('riskPerLot','—');
-    return;
-  }
-
-  const riskPerShare=entry-stop;
-  const riskPerLot=riskPerShare*1000;
-  const riskLots=Math.floor(maxLoss/riskPerLot);
-  const capitalLots=Math.floor(capital/(entry*1000));
-  const lots=Math.max(0,Math.min(riskLots,capitalLots));
-  const used=lots*entry*1000;
-
-  setText('shares',lots+' 張');
-  setText('usedCapital','NT$ '+Math.round(used).toLocaleString());
-  setText('riskPerLot','NT$ '+Math.round(riskPerLot).toLocaleString());
-}
-['capital','riskPct','customEntry','customStop'].forEach(id=>$(id).addEventListener('input',()=>{
-  updatePosition();
-  $('riskDisplay').textContent=(+$('riskPct').value||0)+'%';
-}));
-$('riskDisplay').textContent=(+$('riskPct').value||2)+'%';
-
 
 const WATCH_KEY='huanhuan_stock_watchlist_v1';
 function getWatch(){try{return JSON.parse(localStorage.getItem(WATCH_KEY)||'[]')}catch(e){return[]}}
@@ -934,24 +824,26 @@ async function updateFundamentals(id,end){
 
 async function loadStock(id){
   const raw=String(id||'').trim();
-  id=normalizeStockInput(raw);
+  id=await normalizeStockInput(raw);
   if(!id){
-    $('error').textContent='請輸入 4～6 碼股票代號，或公司中文名稱，例如「台積電」、「聯發科」、「穩懋」。';
+    $('error').textContent='找不到這支股票的完整名稱。請確認代號或中文名稱後再試；網站只分析目前可取得行情的上市／上櫃股票。';
     $('error').style.display='block';
     return;
   }
   $('error').style.display='none';$('dataStatus').textContent='抓取資料…';document.body.classList.add('loading');
   try{
-    const start=datesBack(260),end=new Date().toISOString().slice(0,10);
+    const start=datesBack(520),end=new Date().toISOString().slice(0,10);
     const price=await getData('TaiwanStockPrice',id,start,end);
     if(!price.length)throw new Error('找不到這個股票代號的行情資料');
     const stockName=await resolveStockName(id);
+    if(!stockName) throw new Error('股票名稱資料尚未取得，請重新搜尋一次');
     $('stock').value = stockName;
     setText('currentStock', id+' '+stockName);
     setText('sym', id);
     setText('name', stockName);
     setText('sumCompany', id+'｜'+stockName);
     analyze(price);
+    renderForecast(price);
     updateEventCompany(id);
     // 基本面資料：失敗不影響技術分析。
     await updateFundamentals(id,end);
@@ -982,93 +874,131 @@ async function loadStock(id){
     $('error').style.display='block';$('dataStatus').textContent='資料取得失敗';
   }finally{document.body.classList.remove('loading')}
 }
-$('resetRisk').onclick=()=>{$('capital').value=500000;$('riskPct').value=2;$('customEntry').value='';$('customStop').value='';latestPlan={entry:NaN,stop:NaN,price:NaN};updatePosition()};
 $('go').onclick=()=>loadStock($('stock').value);
 $('stock').addEventListener('keydown',e=>{if(e.key==='Enter')loadStock($('stock').value)});
 document.querySelectorAll('.chip[data-stock]').forEach(b=>b.onclick=()=>{$('stock').value=b.dataset.stock;loadStock(b.dataset.stock)});
 loadStockDirectory();
 
-const SCAN_POOL=[
-  ['2330','台積電'],['2454','聯發科'],['2317','鴻海'],['2303','聯電'],
-  ['2382','廣達'],['3231','緯創'],['6669','緯穎'],['2357','華碩'],
-  ['3105','穩懋'],['8358','金居'],['3037','欣興'],['2376','技嘉'],
-  ['2345','智邦'],['3661','世芯-KY'],['3017','奇鋐'],['3324','雙鴻'],
-  ['3443','創意'],['2379','瑞昱'],['3711','日月光投控'],['2308','台達電']
-];
-
-function calcQuick(rows){
+function forecastFeatures(rows,t){
+  const c=rows.map(x=>+x.close), v=rows.map(x=>+x.Trading_Volume||0);
+  if(t<70)return null;
+  const m20=sma(c.slice(0,t+1),20).at(-1),m60=sma(c.slice(0,t+1),60).at(-1);
+  const rr=rsi(c.slice(0,t+1)).at(-1), aa=atr(rows.slice(0,t+1)).at(-1);
+  const e12=ema(c.slice(0,t+1),12),e26=ema(c.slice(0,t+1),26);
+  const ml=e12.map((x,i)=>x-e26[i]),sg=ema(ml,9),mc=ml.at(-1)-sg.at(-1);
+  const v20=avg(v.slice(Math.max(0,t-19),t+1))||1;
+  return [
+    c[t]/c[t-5]-1,
+    c[t]/c[t-20]-1,
+    c[t]/c[t-60]-1,
+    c[t]/m20-1,
+    c[t]/m60-1,
+    (rr-50)/20,
+    mc/(aa||c[t]*.01),
+    Math.log(Math.max(v[t],1)/v20)
+  ];
+}
+function euclid(a,b,scale){
+  let s=0,n=0;
+  for(let i=0;i<a.length;i++){if(Number.isFinite(a[i])&&Number.isFinite(b[i])){const z=(a[i]-b[i])/(scale[i]||1);s+=z*z;n++}}
+  return n?Math.sqrt(s/n):999;
+}
+function qtile(a,q){
+  const x=a.filter(Number.isFinite).sort((u,v)=>u-v); if(!x.length)return NaN;
+  const p=(x.length-1)*q, lo=Math.floor(p),hi=Math.ceil(p);
+  return lo===hi?x[lo]:x[lo]+(x[hi]-x[lo])*(p-lo);
+}
+function modelAt(rows,t,horizon,k=24){
+  const f=forecastFeatures(rows,t); if(!f)return null;
+  const candidates=[];
+  const start=70,end=t-horizon;
+  if(end<start)return null;
+  const all=[];
+  for(let j=start;j<=end;j++){const fj=forecastFeatures(rows,j);if(fj)all.push({j,d:euclid(f,fj,[.04,.10,.20,.035,.06,.8,2,1])})}
+  all.sort((a,b)=>a.d-b.d);
+  const near=all.slice(0,k);
+  const rets=near.map(x=>+rows[x.j+horizon].close/+rows[x.j].close-1);
+  const weights=near.map(x=>1/(0.08+x.d));
+  const wsum=weights.reduce((a,b)=>a+b,0)||1;
+  const weighted=rets.reduce((s,r,i)=>s+r*weights[i],0)/wsum;
+  return {median:qtile(rets,.5),q25:qtile(rets,.25),q75:qtile(rets,.75),positive:rets.filter(x=>x>0).length/rets.length,samples:rets.length,weighted};
+}
+function walkForwardStats(rows,horizon=5,steps=60){
+  const end=rows.length-horizon-1,start=Math.max(75,end-steps+1);
+  let direction=0,total=0,range=0,mae=0,hit3=0,hit5=0,trigger3=0,trigger5=0;
+  for(let t=start;t<=end;t++){
+    const pred=modelAt(rows,t,horizon,24);
+    if(!pred)continue;
+    const actual=+rows[t+horizon].close/+rows[t].close-1;
+    const predicted=pred.median;
+    if((predicted>=0)===(actual>=0))direction++;
+    if(actual>=pred.q25 && actual<=pred.q75)range++;
+    mae+=Math.abs(predicted-actual);
+    if(predicted>=.03){trigger3++; if(actual>=.03)hit3++;}
+    if(predicted>=.05){trigger5++; if(actual>=.05)hit5++;}
+    total++;
+  }
+  return {
+    direction:total?direction/total:NaN,
+    range:total?range/total:NaN,
+    mae:total?mae/total:NaN,
+    hit3:trigger3?hit3/trigger3:NaN,
+    hit5:trigger5?hit5/trigger5:NaN,
+    total,trigger3,trigger5
+  };
+}
+function walkForwardHitRate(rows,horizon=5,steps=60){
+  return walkForwardStats(rows,horizon,steps).direction;
+}
+function renderBacktestStats(rows){
+  const s=walkForwardStats(rows,5,60);
+  setText('btN',Number.isFinite(s.total)?`樣本 ${s.total} 次`:'等待資料');
+  setText('btDirection',Number.isFinite(s.direction)?(s.direction*100).toFixed(0)+'%':'—');
+  setText('btRange',Number.isFinite(s.range)?(s.range*100).toFixed(0)+'%':'—');
+  setText('btMAE',Number.isFinite(s.mae)?(s.mae*100).toFixed(1)+' 個百分點':'—');
+  setText('bt3',Number.isFinite(s.hit3)?(s.hit3*100).toFixed(0)+'%':'樣本不足');
+  setText('bt5',Number.isFinite(s.hit5)?(s.hit5*100).toFixed(0)+'%':'樣本不足');
+  setText('btNote',`最近 ${s.total||0} 次可做的 5 交易日走勢回測：方向命中率 ${Number.isFinite(s.direction)?(s.direction*100).toFixed(0)+'%':'無法估算'}；實際報酬落在預測 25～75% 區間的比例 ${Number.isFinite(s.range)?(s.range*100).toFixed(0)+'%':'無法估算'}；平均絕對誤差 ${Number.isFinite(s.mae)?(s.mae*100).toFixed(1)+' 個百分點':'無法估算'}。若模型曾預測至少 +3%，其中實際達 +3% 的比例為 ${Number.isFinite(s.hit3)?(s.hit3*100).toFixed(0)+'%':'樣本不足'}；至少 +5% 的條件為 ${Number.isFinite(s.hit5)?(s.hit5*100).toFixed(0)+'%':'樣本不足'}。這些都是歷史回測統計，不是未來報酬保證。`);
+}
+function forecastTone(p){
+  if(!p)return ['neutral','等待資料'];
+  if(p.positive>=.62&&p.median>=.01)return ['up','偏多機率較高'];
+  if(p.positive<=.38&&p.median<=-.01)return ['down','偏弱機率較高'];
+  return ['neutral','震盪／方向不明'];
+}
+function setForecastBox(id,p){
+  const el=$(id+'Box'); if(!el)return;
+  const cls=p>0.005?'up':p<-0.005?'down':'neutral';
+  el.className='forecast-box '+cls;
+}
+function renderForecast(rows){
   rows=rows.filter(r=>+r.close>0).sort((a,b)=>a.date.localeCompare(b.date));
-  if(rows.length<65)return null;
-  const c=rows.map(r=>+r.close),v=rows.map(r=>+r.Trading_Volume||0);
-  const m20=sma(c,20).at(-1),m60=sma(c,60).at(-1),cur=c.at(-1);
-  const rs=rsi(c).at(-1),at=atr(rows).at(-1),v20=avg(v.slice(-20)),vr=v.at(-1)/(v20||1);
-  const e12=ema(c,12),e26=ema(c,26),ml=e12.map((x,i)=>x-e26[i]),sg=ema(ml,9),mc=ml.at(-1)-sg.at(-1);
-  const highs=rows.slice(-60).map(r=>+r.max),lows=rows.slice(-60).map(r=>+r.min);
-  const res=Math.max(...highs),sup=Math.min(...lows);
-  const entryLow=Math.max(m20-0.5*at,sup),entryHigh=Math.min(cur+0.1*at,res);
-  const stop=Math.min(sup,entryLow-1.1*at),entry=(entryLow+entryHigh)/2;
-  const target=Math.max(res,cur+2.2*at),risk=Math.max(entry-stop,.01),rr=(target-entry)/risk;
-  let score=50;
-  if(cur>m20)score+=12; else score-=10;
-  if(m20>m60)score+=12; else score-=10;
-  if(rs>55&&rs<72)score+=10; else if(rs>=72)score-=5; else score-=6;
-  if(mc>0)score+=9; else score-=7;
-  if(vr>1.2)score+=5; else if(vr<.7)score-=3;
-  score=Math.max(0,Math.min(100,Math.round(score)));
-  return {cur,m20,m60,rs,vr,mc,rr,score,entry,stop,target};
+  if(rows.length<100)return;
+  const p1=modelAt(rows,rows.length-1,1,24);
+  const p5=modelAt(rows,rows.length-1,5,24);
+  const p20=modelAt(rows,rows.length-1,20,24);
+  if(!p1||!p5||!p20)return;
+  const cur=+rows.at(-1).close;
+  const pc=(x)=>Number.isFinite(x)?(x*100).toFixed(1)+'%':'—';
+  const price=(x)=>Number.isFinite(x)?fmt(cur*(1+x)):'—';
+  setText('fc1',pc(p1.median));setText('fc1Range',pc(p1.q25)+' ～ '+pc(p1.q75));setForecastBox('fc1',p1.median);
+  setText('fc5',pc(p5.median));setText('fc5Range',pc(p5.q25)+' ～ '+pc(p5.q75));setForecastBox('fc5',p5.median);
+  setText('fc20',pc(p20.median));setText('fc20Range',pc(p20.q25)+' ～ '+pc(p20.q75));setForecastBox('fc20',p20.median);
+  const prob=p5.positive*100;
+  setText('fcProb',prob.toFixed(0)+'%');setText('fcProbText',prob.toFixed(0)+'%');$('fcProbBar').style.width=Math.max(0,Math.min(100,prob))+'%';
+  const spread=Math.abs(p5.q75-p5.q25);
+  const conf=p5.samples>=18&&spread<.12?'較高':p5.samples>=12&&spread<.20?'中等':'較低';
+  setText('fcConfidence','模型信心：'+conf);
+  setText('fc5Price',price(p5.median));setText('fc20Price',price(p20.median));setText('fcSamples',p5.samples+' 個相似樣本');
+  setText('planFc5',price(p5.median));setText('planFc5Note',`中位數 ${pc(p5.median)}｜25～75% ${pc(p5.q25)}～${pc(p5.q75)}`);
+  setText('planFc20',price(p20.median));setText('planFc20Note',`中位數 ${pc(p20.median)}｜25～75% ${pc(p20.q25)}～${pc(p20.q75)}`);
+  const bt=walkForwardStats(rows,5,60);
+  const hit=bt.direction;setText('fcHit',Number.isFinite(hit)?(hit*100).toFixed(0)+'%':'—');
+  renderBacktestStats(rows);
+  const [cls,label]=forecastTone(p5);$('fcStatus').className='forecast-status '+cls;setText('fcStatus',label);
+  setText('fcReason',`以 ${rows.at(-1).date} 的型態與過去相似交易日比較：5日報酬中位數 ${pc(p5.median)}，歷史中 5日上漲比例約 ${prob.toFixed(0)}%。預估價格約 ${price(p5.median)}；20日中位數報酬 ${pc(p20.median)}。近期樣本的方向命中率約 ${Number.isFinite(hit)?(hit*100).toFixed(0)+'%':'無法估算'}，僅代表這套規則在最近歷史資料上的回測表現。`);
 }
 
-async function scanAll(){
-  const btn=$('scanBtn'),out=$('scanResults'),sum=$('scanSummary');
-  const minScore=+$('minScore').value||0,minVol=+$('minVol').value||0,minRR=+$('minRR').value||0,tf=$('trendFilter').value;
-  btn.disabled=true;btn.textContent='掃描中…';out.innerHTML='<div class="scan-empty">正在取得資料，請稍候…</div>';
-  let found=[],failed=0;
-  const start=datesBack(260),end=new Date().toISOString().slice(0,10);
-  // Small batches avoid opening too many requests at once.
-  for(let i=0;i<SCAN_POOL.length;i+=4){
-    const batch=SCAN_POOL.slice(i,i+4);
-    const results=await Promise.all(batch.map(async ([id,n])=>{
-      try{
-        const data=await getData('TaiwanStockPrice',id,start,end);
-        const q=calcQuick(data);
-        if(!q)return null;
-        if(q.score<minScore||q.vr<minVol||q.rr<minRR)return null;
-        if(tf==='bull'&&!(q.m20>q.m60))return null;
-        if(tf==='above20'&&!(q.cur>q.m20))return null;
-        return {id,n,...q};
-      }catch(e){failed++;return null}
-    }));
-    found.push(...results.filter(Boolean));
-    sum.innerHTML='<span class="scan-badge">已完成 '+Math.min(i+4,SCAN_POOL.length)+' / '+SCAN_POOL.length+'</span><span class="scan-badge">符合條件 '+found.length+' 檔</span>';
-  }
-  found.sort((a,b)=>b.score-a.score||b.rr-a.rr);
-  if(!found.length){
-    out.innerHTML='<div class="scan-empty">目前沒有符合條件的標的。可以降低最低分數、量能或 R 值再掃描。</div>';
-  }else{
-    out.innerHTML='<table class="scan-table"><thead><tr><th>股票</th><th>分數</th><th>現價</th><th>RSI</th><th>量能</th><th>進場區中位</th><th>停損</th><th>目標</th><th>R</th><th></th></tr></thead><tbody>'+
-      found.map(x=>`<tr>
-        <td><b>${esc(x.id)} ${esc(x.n)}</b></td>
-        <td><b class="${x.score>=70?'up':x.score<50?'down':'neutral'}">${x.score}</b></td>
-        <td>${fmt(x.cur)}</td>
-        <td>${fmt(x.rs,1)}</td>
-        <td>${fmt(x.vr,2)}x</td>
-        <td>${fmt(x.entry)}</td>
-        <td class="down">${fmt(x.stop)}</td>
-        <td class="up">${fmt(x.target)}</td>
-        <td><b>${x.rr.toFixed(2)}R</b></td>
-        <td><button class="chip" onclick="openFromScan('${x.id}')">詳細</button></td>
-      </tr>`).join('')+'</tbody></table>';
-  }
-  sum.innerHTML+=`<span class="scan-badge">API 無法取得：${failed} 檔</span>`;$('scanCount').textContent=found.length+' 檔符合';
-  btn.disabled=false;btn.textContent='重新掃描';
-}
-function openFromScan(id){
-  $('stock').value=id;window.scrollTo({top:0,behavior:'smooth'});loadStock(id);
-}
-$('scanBtn').addEventListener('click',scanAll);
-
-updateSeasonality();
-updateUSMarket();
 </script>
 </body>
 </html>
