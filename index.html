@@ -192,6 +192,9 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 .swing-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.swing-head h2{margin:0;font-size:20px}.swing-head p{margin:5px 0 0;color:#7895a9;font-size:11px;line-height:1.5}.swing-status{font-size:11px;color:#8fb0c3;white-space:nowrap}
 .swing-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}.swing-item{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;background:#091a2a;border:1px solid #173b53;border-radius:14px;padding:11px;cursor:pointer}.swing-item:hover{border-color:#2a708e}.swing-rank{font-size:16px;font-weight:800;color:#8aa8b9;text-align:center}.swing-name b{display:block;font-size:14px}.swing-name small{color:#7692a4;font-size:10px}.swing-signal{text-align:right}.swing-signal b{display:block;font-size:14px}.swing-signal small{display:block;color:#7895a9;font-size:10px;margin-top:3px}.swing-up{color:#4fe0bc}.swing-down{color:#ff7890}.swing-flat{color:#ffd76a}.swing-empty{padding:18px;text-align:center;color:#718da2;font-size:12px;background:#091a2a;border:1px dashed #23465c;border-radius:14px}.swing-note{margin-top:10px;color:#657f92;font-size:10px;line-height:1.6}
 @media(max-width:700px){.swing-grid{grid-template-columns:1fr}.swing-head{display:block}.swing-status{display:block;margin-top:8px}}
+
+.app-view[hidden]{display:none!important}.view-switch{font:inherit;cursor:pointer;background:#081b2b;color:#b9d1df}.view-switch:hover{border-color:#2a708e;color:#fff}
+#swingView{padding-top:18px}.swing-radar{margin-top:0}
 </style>
 
 </head>
@@ -199,9 +202,21 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 <div class="wrap">
   <header class="top">
     <a class="brand" id="homeBrand" href="#home" aria-label="回到首頁" style="text-decoration:none;color:inherit"><div class="logo">↗</div><div>歡歡的台股 AI 雷達<small>HUANHUAN'S TAIWAN STOCK RADAR</small></div></a>
-    <div style="display:flex;gap:8px;align-items:center"><div class="status">♡ 歡歡專屬</div><div class="status" id="dataStatus">等待分析</div></div>
+    <div style="display:flex;gap:8px;align-items:center"><button class="status view-switch" id="swingNav" type="button">🎯 波段選股</button><div class="status" id="dataStatus">等待分析</div></div>
   </header>
 
+  <section id="swingView" class="app-view" hidden>
+<section class="swing-radar" id="swingRadar">
+  <div class="swing-head">
+    <div><h2>🎯 AI 波段雷達｜自動挑選 10 支</h2><p>系統會從目前可取得的上市／上櫃近期行情中，尋找較適合做波段觀察的股票；看多與看空都會列出並明確標示。</p></div>
+    <div class="swing-status" id="swingStatus">正在載入市場資料…</div>
+  </div>
+  <div class="swing-grid" id="swingList"><div class="swing-empty">正在掃描近期行情與模型訊號，請稍候…</div></div>
+  <div class="swing-note">⚠️ 「適合波段」是模型依趨勢、動能、波動、成交量與 5／20 日歷史相似型態計算出的候選，不代表推薦或保證獲利；看空代表模型預期方向偏弱，並不等同於建議放空。</div>
+</section>
+  </section>
+
+  <div id="analysisView" class="app-view">
   <section class="hero">
     <div class="kicker">♡ 歡歡專屬 · 自動技術分析 · 支撐 / 壓力 / 進場 / 停損 / 目標</div>
     <h1>歡歡今天<br><span>想看哪支股票</span><b>？</b></h1>
@@ -231,13 +246,6 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
       <button id="go">開始分析 ✦</button>
     </div>
     <div class="search-hint">💡 可輸入「股票代號」或「公司中文名稱」；網站會載入目前上市／上櫃股票清單，名稱可直接搜尋。<span id="directoryStatus">股票名稱清單載入中…</span></div>
-    <div class="tools">
-      <button class="chip" data-stock="2330">2330 台積電</button>
-      <button class="chip" data-stock="2454">2454 聯發科</button>
-      <button class="chip" data-stock="3105">3105 穩懋</button>
-      <button class="chip" data-stock="8358">8358 金居</button>
-      <button class="chip" data-stock="2317">2317 鴻海</button>
-    </div>
     
 <div class="personal">
   <div class="pbox"><small>♡ 我的自選股</small><b id="watchCount">0 檔</b></div>
@@ -255,14 +263,7 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
   </section>
 
 
-<section class="swing-radar" id="swingRadar">
-  <div class="swing-head">
-    <div><h2>🎯 AI 波段雷達｜自動挑選 10 支</h2><p>系統會從目前可取得的上市／上櫃近期行情中，尋找較適合做波段觀察的股票；看多與看空都會列出並明確標示。</p></div>
-    <div class="swing-status" id="swingStatus">正在載入市場資料…</div>
-  </div>
-  <div class="swing-grid" id="swingList"><div class="swing-empty">正在掃描近期行情與模型訊號，請稍候…</div></div>
-  <div class="swing-note">⚠️ 「適合波段」是模型依趨勢、動能、波動、成交量與 5／20 日歷史相似型態計算出的候選，不代表推薦或保證獲利；看空代表模型預期方向偏弱，並不等同於建議放空。</div>
-</section>
+
 
   <div class="grid" id="dashboard">
     <section class="card">
@@ -484,6 +485,7 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
   <div class="warning">點擊股票即可進入完整分析。自選股只儲存在目前瀏覽器，不會上傳。</div>
 </section>
 <div class="footer">⚠️ 歡歡專屬分析工具：所有進場、停損、目標與分數都是依歷史資料與規則計算的研究參考，不代表未來報酬或保證獲利。<br>台股雷達 Demo · 歷史資料分析不代表未來走勢 · 上市、上櫃與興櫃資料欄位定義可能不同</div>
+  </div>
 </div>
 
 <script>
@@ -929,6 +931,24 @@ function renderSwingRadar(items,status='完成'){
     return `<button class="swing-item" type="button" onclick="openFromScan('${esc(x.code)}')"><div class="swing-rank">${i+1}</div><div class="swing-name"><b>${esc(x.code)} ${esc(x.name)}</b><small>現價 ${fmt(x.price)}｜5日模型 ${fc>=0?'+':''}${fc.toFixed(1)}%｜RSI ${x.rsi.toFixed(0)}</small></div><div class="swing-signal ${cls}"><b>${x.direction}</b><small>波段分數 ${x.score.toFixed(1)}</small></div></button>`;
   }).join('');
 }
+const SWING_STATIC_BASE='https://raw.githubusercontent.com/Chill0237/tw_stock_dashboard/main/docs/api/stock/';
+async function getSwingPriceRows(code){
+  // 波段雷達優先使用一次一檔的靜態歷史 JSON，避免首頁同時大量呼叫 FinMind API。
+  try{
+    const r=await fetch(SWING_STATIC_BASE+encodeURIComponent(code)+'.json',{cache:'no-store'});
+    if(r.ok){
+      const j=await r.json();
+      if(Array.isArray(j?.price)&&j.price.length>=100){
+        return j.price.map(x=>({
+          date:x.date,open:+x.open,max:+x.high,min:+x.low,close:+x.close,Trading_Volume:+x.volume||0
+        })).filter(x=>x.date&&Number.isFinite(x.close));
+      }
+    }
+  }catch(e){}
+  // 靜態來源失敗時才回退 FinMind 個股查詢。
+  const end=new Date(),start=new Date();start.setDate(end.getDate()-520);
+  return getData('TaiwanStockPrice',code,fmtDate(start),fmtDate(end));
+}
 const SWING_POOL=[
   '2330','2317','2454','2308','2382','3231','6669','2379','3034','3711',
   '2357','2327','2345','3017','3443','3661','3653','2368','2383','2449',
@@ -936,7 +956,7 @@ const SWING_POOL=[
   '2603','2615','2618','2609','2634','2881','2882','2891','2886','2884',
   '1301','1303','2002','1101','5871','5880','1216','2912'
 ];
-const SWING_CACHE_KEY='huanhuan_swing_radar_v3';
+const SWING_CACHE_KEY='huanhuan_swing_radar_v4';
 function loadSwingCache(){
   try{const x=JSON.parse(localStorage.getItem(SWING_CACHE_KEY)||'null');if(x&&Date.now()-x.savedAt<2*60*60*1000&&Array.isArray(x.items)&&x.items.length)return x.items;}catch(e){}return null;
 }
@@ -952,28 +972,30 @@ async function loadSwingRadar(){
   try{
     $('swingStatus').textContent='正在掃描波段候選…';
     await ensureStockDirectory();
-    const end=new Date(), start=new Date(); start.setDate(end.getDate()-190);
-    let done=0;
+    let done=0, failed=0;
     const candidates=await mapLimit(SWING_POOL,4,async code=>{
       try{
-        const rs=await getData('TaiwanStockPrice',code,fmtDate(start),fmtDate(end));
-        done++; if(done%4===0)$('swingStatus').textContent=`正在分析 ${done}/${SWING_POOL.length}…`;
+        const rs=await getSwingPriceRows(code);
+        done++; if(done%3===0)$('swingStatus').textContent=`正在分析 ${done}/${SWING_POOL.length}…`;
         const x=swingSignalScore(rs); if(!x)return null;
         const name=(await resolveStockName(code))||names[code]||code;
         return {...x,code,name};
-      }catch(e){done++;return null;}
+      }catch(e){done++;failed++;return null;}
     });
     candidates.sort((a,b)=>Math.abs(b.score)-Math.abs(a.score));
     const top=candidates.slice(0,10);
     if(!top.length)throw new Error('候選資料不足');
     saveSwingCache(top);
-    renderSwingRadar(top,`已分析 ${candidates.length} 檔有效候選｜每 2 小時更新`);
+    renderSwingRadar(top,`已完成｜${candidates.length} 檔有效候選｜每 2 小時更新`);
   }catch(e){
-    renderSwingRadar([],'波段資料暫時無法取得');
+    const msg=(e&&e.message)?e.message:'資料來源連線失敗';
+    $('swingStatus').textContent='波段雷達載入失敗';
+    const box=$('swingList'); if(box) box.innerHTML=`<div class="swing-empty">目前無法完成自動選股：${esc(msg)}。<br>請稍後重新整理頁面再試。</div>`;
   }
 }
 
 function openFromScan(code){
+  showAppView('analysis');
   const input=$('stock'); if(input)input.value=code;
   loadStock(code);
   const target=document.querySelector('.stock-card')||document.querySelector('#result')||document.querySelector('.analysis');
@@ -1100,17 +1122,38 @@ function renderForecast(rows){
   setText('fcReason',`以 ${rows.at(-1).date} 的型態與過去相似交易日比較：5日報酬中位數 ${pc(p5.median)}，歷史中 5日上漲比例約 ${prob.toFixed(0)}%。預估價格約 ${price(p5.median)}；20日中位數報酬 ${pc(p20.median)}。近期樣本的方向命中率約 ${Number.isFinite(hit)?(hit*100).toFixed(0)+'%':'無法估算'}，僅代表這套規則在最近歷史資料上的回測表現。`);
 }
 
-// 標題本身是原生 #home 連結；JS 只負責加上平滑捲動，停用 JS 時仍可回首頁。
+// 分頁式介面：個股分析與波段選股彼此獨立。
+let swingLoaded=false;
+function scrollPageTop(){
+  window.scrollTo(0,0);
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
+}
+function showAppView(view){
+  const swing=view==='swing';
+  const av=$('analysisView'), sv=$('swingView');
+  if(av) av.hidden=swing;
+  if(sv) sv.hidden=!swing;
+  const nav=$('swingNav');
+  if(nav) nav.textContent=swing?'← 個股分析':'🎯 波段選股';
+  scrollPageTop();
+  if(swing&&!swingLoaded){swingLoaded=true;loadSwingRadar();}
+}
 const homeBrand=$('homeBrand');
 if(homeBrand){
   homeBrand.addEventListener('click',e=>{
     e.preventDefault();
-    document.getElementById('home')?.scrollIntoView({behavior:'smooth',block:'start'});
-    history.replaceState(null,'',location.pathname+location.search+'#home');
+    showAppView('analysis');
+    try{history.replaceState(null,'',location.pathname+location.search);}catch(_){}
   });
 }
-
-loadSwingRadar();
+const swingNav=$('swingNav');
+if(swingNav){
+  swingNav.addEventListener('click',()=>{
+    const showingSwing=$('swingView')&&!$('swingView').hidden;
+    showAppView(showingSwing?'analysis':'swing');
+  });
+}
 
 </script>
 </body>
