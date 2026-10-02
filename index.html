@@ -208,11 +208,11 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
   <section id="swingView" class="app-view" hidden>
 <section class="swing-radar" id="swingRadar">
   <div class="swing-head">
-    <div><h2>🎯 AI 波段雷達｜自動挑選 10 支</h2><p>系統會從目前可取得的上市／上櫃近期行情中，尋找較適合做波段觀察的股票；看多與看空都會列出並明確標示。</p></div>
+    <div><h2>🤖 AI 錯殺起漲雷達｜自動挑選 10 支</h2><p>優先尋找價格仍在相對低位、基本面未明顯惡化、量價與動能開始轉強的候選；同時保留偏空警示。目標是找「可能起漲」，不是追已經大漲的股票。</p></div>
     <div class="swing-status" id="swingStatus">正在載入市場資料…</div>
   </div>
   <div class="swing-grid" id="swingList"><div class="swing-empty">正在掃描近期行情與模型訊號，請稍候…</div></div>
-  <div class="swing-note">⚠️ 「適合波段」是模型依趨勢、動能、波動、成交量與 5／20 日歷史相似型態計算出的候選，不代表推薦或保證獲利；看空代表模型預期方向偏弱，並不等同於建議放空。</div>
+  <div class="swing-note">⚠️ 雷達以「低位／錯殺、基本面品質、起漲動能、量價確認、歷史相似型態」綜合排序。7 日爆發潛力是條件分數，不是未來報酬率或獲利保證；偏空僅代表目前條件較弱。</div>
 </section>
   </section>
 
@@ -902,24 +902,62 @@ loadStockDirectory();
 
 function swingSignalScore(rows){
   rows=rows.filter(r=>Number.isFinite(+r.close)&&+r.close>0).sort((a,b)=>a.date.localeCompare(b.date));
-  if(rows.length<70)return null;
+  if(rows.length<130)return null;
   const c=rows.map(r=>+r.close), v=rows.map(r=>+r.Trading_Volume||0), last=c.length-1;
   const m5=sma(c,5).at(-1),m20=sma(c,20).at(-1),m60=sma(c,60).at(-1);
-  const rr=rsi(c).at(-1), aa=atr(rows).at(-1);
-  const ret5=c[last]/c[last-5]-1, ret20=c[last]/c[last-20]-1;
+  const rr=rsi(c).at(-1), ret5=c[last]/c[last-5]-1, ret20=c[last]/c[last-20]-1;
+  const hi120=Math.max(...c.slice(-120)), lo120=Math.min(...c.slice(-120));
+  const rangePos=(c[last]-lo120)/Math.max(hi120-lo120,.0001);
+  const drawdown=c[last]/hi120-1;
   const vol20=avg(v.slice(-20))||1, volRatio=v[last]/vol20;
   const p5=modelAt(rows,last,5,24), p20=modelAt(rows,last,20,24);
   if(!p5||!p20)return null;
-  const trend=((m5/m20-1)*100 + (m20/m60-1)*100);
-  const momentum=Math.max(-3,Math.min(3,ret5*100*0.7 + ret20*100*0.3));
-  const rsiScore=rr>=55&&rr<=72?1.5:rr<=45&&rr>=28?-1.5:0;
-  const volumeScore=volRatio>=1.25?(ret5>=0?1.2:-1.2):volRatio<=0.7?-.3:0;
-  const modelScore=Math.max(-4,Math.min(4,(p5.median*100*0.7+p20.median*100*0.3)));
-  let score=trend*1.4+momentum+rsiScore+volumeScore+modelScore;
-  score=Math.max(-10,Math.min(10,score));
-  const direction=score>=0?'看多':'看空';
-  const confidence=Math.min(99,Math.max(50,50+Math.abs(score)*4+p5.positive*10));
-  return {score,direction,confidence,price:c[last],ret5,ret20,rsi:rr,volRatio,p5,p20,date:rows[last].date};
+
+  // 低位／錯殺：位階低、有明顯回撤，但避免仍在自由落體。
+  let lowScore=0;
+  if(rangePos<=.25) lowScore+=24; else if(rangePos<=.40) lowScore+=17; else if(rangePos<=.55) lowScore+=8;
+  if(drawdown<=-.18) lowScore+=12; else if(drawdown<=-.10) lowScore+=7;
+  if(ret20<-.22) lowScore-=10; // 跌勢過急，不把接刀誤認成錯殺
+
+  // 起漲：短線轉強、站回均線、量能溫和放大；已暴漲則扣分。
+  let ignition=0;
+  if(c[last]>m5) ignition+=8;
+  if(m5>m20) ignition+=10;
+  if(c[last]>m20) ignition+=7;
+  if(ret5>0&&ret5<.09) ignition+=9;
+  if(rr>=42&&rr<=62) ignition+=8; else if(rr>72) ignition-=10;
+  if(volRatio>=1.15&&volRatio<=2.5) ignition+=10; else if(volRatio>3.5) ignition-=5;
+  if(ret5>.12||ret20>.25) ignition-=18; // 不追短線已噴出的股票
+
+  // 歷史相似型態：用既有 walk-forward/nearest-pattern 模型作輔助，不直接當保證。
+  const model7=(p5.median*0.7+p20.median*0.3);
+  let pattern=Math.max(-15,Math.min(20,model7*180));
+  pattern+=(p5.positive-.5)*20;
+  const raw=Math.max(0,Math.min(100,lowScore+ignition+pattern));
+  const direction=(raw>=48&&model7>=-.01)?'偏多':'偏空';
+  return {score:raw,direction,price:c[last],ret5,ret20,rsi:rr,volRatio,p5,p20,date:rows[last].date,
+    rangePos,drawdown,lowScore,ignition,pattern,model7,fundScore:null,fundLabel:'基本面待檢查'};
+}
+async function swingFundamentalScore(code){
+  try{
+    const end=fmtDate(new Date());
+    const [fin,rev]=await Promise.all([
+      getData('TaiwanStockFinancialStatements',code,datesBack(520),end),
+      getData('TaiwanStockMonthRevenue',code,datesBack(430),end)
+    ]);
+    const eps=financialValue(fin,['eps']).value;
+    const gross=marginFrom(fin,['grossprofit','毛利'],['revenue','營業收入']);
+    const op=marginFrom(fin,['operatingincome','operatingprofit','營業利益'],['revenue','營業收入']);
+    const lr=(rev||[]).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')).at(-1);
+    const yoy=findRevenueYoY(lr);
+    let score=50, good=0, bad=0;
+    if(Number.isFinite(eps)){eps>0?(score+=12,good++):(score-=18,bad++);}
+    if(Number.isFinite(yoy)){yoy>10?(score+=14,good++):yoy>0?(score+=7,good++):yoy<-15?(score-=15,bad++):(score-=5,bad++);}
+    if(Number.isFinite(gross)){gross>25?(score+=8,good++):gross<8?(score-=8,bad++):0;}
+    if(Number.isFinite(op)){op>10?(score+=10,good++):op<0?(score-=14,bad++):0;}
+    score=Math.max(0,Math.min(100,score));
+    return {score,label:bad>=2?'基本面偏弱':good>=2?'基本面穩健':'基本面中性',eps,yoy,gross,op};
+  }catch(e){return {score:50,label:'基本面資料不足'};}
 }
 function renderSwingRadar(items,status='完成'){
   const box=$('swingList'); if(!box)return;
@@ -927,8 +965,8 @@ function renderSwingRadar(items,status='完成'){
   if(!items.length){box.innerHTML='<div class="swing-empty">目前沒有足夠資料完成波段排序，請稍後再試。</div>';return;}
   box.innerHTML=items.map((x,i)=>{
     const cls=x.direction==='看多'?'swing-up':'swing-down';
-    const fc=x.p5.median*100;
-    return `<button class="swing-item" type="button" onclick="openFromScan('${esc(x.code)}')"><div class="swing-rank">${i+1}</div><div class="swing-name"><b>${esc(x.code)} ${esc(x.name)}</b><small>現價 ${fmt(x.price)}｜5日模型 ${fc>=0?'+':''}${fc.toFixed(1)}%｜RSI ${x.rsi.toFixed(0)}</small></div><div class="swing-signal ${cls}"><b>${x.direction}</b><small>波段分數 ${x.score.toFixed(1)}</small></div></button>`;
+    const fc=x.model7*100;
+    return `<button class="swing-item" type="button" onclick="openFromScan('${esc(x.code)}')"><div class="swing-rank">${i+1}</div><div class="swing-name"><b>${esc(x.code)} ${esc(x.name)}</b><small>現價 ${fmt(x.price)}｜120日位階 ${(x.rangePos*100).toFixed(0)}%｜7日模型 ${fc>=0?'+':''}${fc.toFixed(1)}%</small><small>錯殺 ${x.lowScore.toFixed(0)}｜起漲 ${x.ignition.toFixed(0)}｜${esc(x.fundLabel||'基本面待檢查')}</small></div><div class="swing-signal ${cls}"><b>${x.direction}</b><small>爆發潛力 ${x.score.toFixed(0)}/100</small></div></button>`;
   }).join('');
 }
 const SWING_STATIC_BASE='https://raw.githubusercontent.com/Chill0237/tw_stock_dashboard/main/docs/api/stock/';
@@ -956,7 +994,7 @@ const SWING_POOL=[
   '2603','2615','2618','2609','2634','2881','2882','2891','2886','2884',
   '1301','1303','2002','1101','5871','5880','1216','2912'
 ];
-const SWING_CACHE_KEY='huanhuan_swing_radar_v4';
+const SWING_CACHE_KEY='huanhuan_swing_radar_v5_mispricing';
 function loadSwingCache(){
   try{const x=JSON.parse(localStorage.getItem(SWING_CACHE_KEY)||'null');if(x&&Date.now()-x.savedAt<2*60*60*1000&&Array.isArray(x.items)&&x.items.length)return x.items;}catch(e){}return null;
 }
@@ -982,11 +1020,23 @@ async function loadSwingRadar(){
         return {...x,code,name};
       }catch(e){done++;failed++;return null;}
     });
-    candidates.sort((a,b)=>Math.abs(b.score)-Math.abs(a.score));
-    const top=candidates.slice(0,10);
+    // 先用價格/量價模型取前 18 名，再補基本面，避免對全池大量呼叫財報 API。
+    candidates.sort((a,b)=>b.score-a.score);
+    const shortlist=candidates.slice(0,18);
+    $('swingStatus').textContent=`正在檢查 ${shortlist.length} 支候選基本面…`;
+    await mapLimit(shortlist,3,async x=>{
+      const f=await swingFundamentalScore(x.code);
+      x.fundScore=f.score; x.fundLabel=f.label;
+      // 基本面佔 25%，價格低位/起漲/型態佔 75%；基本面明顯弱者再降權。
+      x.score=Math.max(0,Math.min(100,x.score*.75+f.score*.25-(f.score<35?12:0)));
+      if(f.score<30&&x.direction==='偏多')x.direction='偏空';
+      return x;
+    });
+    shortlist.sort((a,b)=>b.score-a.score);
+    const top=shortlist.slice(0,10);
     if(!top.length)throw new Error('候選資料不足');
     saveSwingCache(top);
-    renderSwingRadar(top,`已完成｜${candidates.length} 檔有效候選｜每 2 小時更新`);
+    renderSwingRadar(top,`已完成｜${candidates.length} 檔有效候選｜錯殺＋起漲＋基本面｜每 2 小時更新`);
   }catch(e){
     const msg=(e&&e.message)?e.message:'資料來源連線失敗';
     $('swingStatus').textContent='波段雷達載入失敗';
