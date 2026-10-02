@@ -616,10 +616,26 @@ function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;',
 
 async function getData(dataset,id,start,end){
   const u=new URL(API);u.searchParams.set('dataset',dataset);if(id)u.searchParams.set('data_id',id);if(start)u.searchParams.set('start_date',start);if(end)u.searchParams.set('end_date',end);
-  const token=$('token').value.trim(); const opt=token?{headers:{Authorization:'Bearer '+token}}:{};
-  const r=await fetch(u,opt); if(!r.ok) throw new Error(dataset+' HTTP '+r.status);
-  const j=await r.json(); if(!j.data) throw new Error(dataset+' 無資料');
-  return j.data;
+  const token=$('token')?.value.trim()||''; const opt=token?{headers:{Authorization:'Bearer '+token}}:{};
+  try{
+    const r=await fetch(u,opt); if(!r.ok) throw new Error(dataset+' HTTP '+r.status);
+    const j=await r.json(); if(!Array.isArray(j.data)) throw new Error(dataset+' 無資料');
+    return j.data;
+  }catch(err){
+    // GitHub Pages / iPhone Safari 偶爾會擋 FinMind 直連。股價改走公開靜態資料備援，
+    // 讓個股技術分析與預測中心至少能繼續工作；其他資料集維持原本錯誤處理。
+    if(dataset==='TaiwanStockPrice' && id){
+      try{
+        const r=await fetch('https://raw.githubusercontent.com/Chill0237/tw_stock_dashboard/main/docs/api/stock/'+encodeURIComponent(id)+'.json',{cache:'no-store'});
+        if(r.ok){
+          const j=await r.json();
+          const rows=(Array.isArray(j?.price)?j.price:[]).map(x=>({stock_id:String(id),date:x.date,open:+x.open,max:+x.high,min:+x.low,close:+x.close,Trading_Volume:+x.volume||0})).filter(x=>x.date&&Number.isFinite(x.close));
+          if(rows.length) return rows.filter(x=>(!start||x.date>=start)&&(!end||x.date<=end));
+        }
+      }catch(_){ }
+    }
+    throw err;
+  }
 }
 function datesBack(days){let d=new Date();d.setDate(d.getDate()-days);return d.toISOString().slice(0,10)}
 function nextQuarterEnd(d){
@@ -904,7 +920,7 @@ async function loadStock(id){
     }catch(e){setText('margin','無資料');setText('marginDir','—')}
     $('dataStatus').textContent='資料更新：API 回傳';
   }catch(e){
-    $('error').textContent='抓不到資料：'+e.message+'。如果瀏覽器阻擋跨網域請求，請在正式部署時用自己的後端 Proxy；也可以輸入 FinMind Token 再試一次。';
+    $('error').textContent='抓不到行情資料：'+e.message+'。系統已自動嘗試 FinMind 與公開靜態行情備援；若兩個來源都暫時無法連線，請稍後再試。';
     $('error').style.display='block';$('dataStatus').textContent='資料取得失敗';
   }finally{document.body.classList.remove('loading')}
 }
@@ -1019,7 +1035,7 @@ function renderSwingRadar(items,status='完成'){
   $('swingStatus').textContent=status;
   if(!items.length){box.innerHTML='<div class="swing-empty">目前沒有足夠資料完成波段排序，請稍後再試。</div>';return;}
   box.innerHTML=items.map((x,i)=>{
-    const cls=x.direction==='看多'?'swing-up':'swing-down';
+    const cls=x.direction==='偏多'?'swing-up':'swing-down';
     const fc=x.model7*100;
     return `<button class="swing-item" type="button" onclick="openFromScan('${esc(x.code)}')"><div class="swing-rank">${i+1}</div><div class="swing-name"><b>${esc(x.code)} ${esc(x.name)}</b><small>現價 ${fmt(x.price)}｜120日位階 ${(x.rangePos*100).toFixed(0)}%｜7日模型 ${fc>=0?'+':''}${fc.toFixed(1)}%</small><small>錯殺 ${x.lowScore.toFixed(0)}｜起漲 ${x.ignition.toFixed(0)}｜${esc(x.fundLabel||'基本面待檢查')}</small><small>${x.tags&&x.tags.length?'⚡ '+esc(x.tags.join('・')):'催化訊號尚未明顯'}｜法人 ${Math.round(x.instScore||0)}｜營收 ${Math.round(x.revAccel||0)}｜量價 ${Math.round(x.volumeLead||0)}</small></div><div class="swing-signal ${cls}"><b>${x.direction}</b><small>爆發潛力 ${x.score.toFixed(0)}/100</small></div></button>`;
   }).join('');
@@ -1240,7 +1256,7 @@ let instRankLoaded=false, instRankData=[], instRankType='foreign', instRankSide=
 function ymdCompact(d){return d.toISOString().slice(0,10).replaceAll('-','')}
 function rocDate(d){return `${d.getFullYear()-1911}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`}
 function nnum(v){const n=Number(String(v??'').replaceAll(',','').replaceAll(' ','').replace('−','-'));return Number.isFinite(n)?n:0}
-function isCommonStock(code){return /^\\d{4}$/.test(String(code||''))}
+function isCommonStock(code){return /^\d{4}$/.test(String(code||''))}
 async function fetchTwseInstDay(d){
   const url=`https://www.twse.com.tw/rwd/zh/fund/T86?date=${ymdCompact(d)}&selectType=ALLBUT0999&response=json`;
   const r=await fetch(url,{cache:'no-store'}); if(!r.ok)throw new Error('TWSE '+r.status); const j=await r.json();
