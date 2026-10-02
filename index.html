@@ -186,6 +186,14 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 @media(max-width:850px){.backtest-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 
+
+<style id="swing-radar-style">
+.swing-radar{margin:18px 0 16px;background:linear-gradient(135deg,#071a2a,#0a2133);border:1px solid #1d4d69;border-radius:20px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,.16)}
+.swing-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.swing-head h2{margin:0;font-size:20px}.swing-head p{margin:5px 0 0;color:#7895a9;font-size:11px;line-height:1.5}.swing-status{font-size:11px;color:#8fb0c3;white-space:nowrap}
+.swing-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}.swing-item{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;background:#091a2a;border:1px solid #173b53;border-radius:14px;padding:11px;cursor:pointer}.swing-item:hover{border-color:#2a708e}.swing-rank{font-size:16px;font-weight:800;color:#8aa8b9;text-align:center}.swing-name b{display:block;font-size:14px}.swing-name small{color:#7692a4;font-size:10px}.swing-signal{text-align:right}.swing-signal b{display:block;font-size:14px}.swing-signal small{display:block;color:#7895a9;font-size:10px;margin-top:3px}.swing-up{color:#4fe0bc}.swing-down{color:#ff7890}.swing-flat{color:#ffd76a}.swing-empty{padding:18px;text-align:center;color:#718da2;font-size:12px;background:#091a2a;border:1px dashed #23465c;border-radius:14px}.swing-note{margin-top:10px;color:#657f92;font-size:10px;line-height:1.6}
+@media(max-width:700px){.swing-grid{grid-template-columns:1fr}.swing-head{display:block}.swing-status{display:block;margin-top:8px}}
+</style>
+
 </head>
 <body>
 <div class="wrap">
@@ -245,6 +253,16 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
     </div>
     <div class="error" id="error"></div>
   </section>
+
+
+<section class="swing-radar" id="swingRadar">
+  <div class="swing-head">
+    <div><h2>🎯 AI 波段雷達｜自動挑選 10 支</h2><p>系統會從目前可取得的上市／上櫃近期行情中，尋找較適合做波段觀察的股票；看多與看空都會列出並明確標示。</p></div>
+    <div class="swing-status" id="swingStatus">正在載入市場資料…</div>
+  </div>
+  <div class="swing-grid" id="swingList"><div class="swing-empty">正在掃描近期行情與模型訊號，請稍候…</div></div>
+  <div class="swing-note">⚠️ 「適合波段」是模型依趨勢、動能、波動、成交量與 5／20 日歷史相似型態計算出的候選，不代表推薦或保證獲利；看空代表模型預期方向偏弱，並不等同於建議放空。</div>
+</section>
 
   <div class="grid" id="dashboard">
     <section class="card">
@@ -879,6 +897,60 @@ $('stock').addEventListener('keydown',e=>{if(e.key==='Enter')loadStock($('stock'
 document.querySelectorAll('.chip[data-stock]').forEach(b=>b.onclick=()=>{$('stock').value=b.dataset.stock;loadStock(b.dataset.stock)});
 loadStockDirectory();
 
+
+function swingSignalScore(rows){
+  rows=rows.filter(r=>Number.isFinite(+r.close)&&+r.close>0).sort((a,b)=>a.date.localeCompare(b.date));
+  if(rows.length<70)return null;
+  const c=rows.map(r=>+r.close), v=rows.map(r=>+r.Trading_Volume||0), last=c.length-1;
+  const m5=sma(c,5).at(-1),m20=sma(c,20).at(-1),m60=sma(c,60).at(-1);
+  const rr=rsi(c).at(-1), aa=atr(rows).at(-1);
+  const ret5=c[last]/c[last-5]-1, ret20=c[last]/c[last-20]-1;
+  const vol20=avg(v.slice(-20))||1, volRatio=v[last]/vol20;
+  const p5=modelAt(rows,last,5,24), p20=modelAt(rows,last,20,24);
+  if(!p5||!p20)return null;
+  const trend=((m5/m20-1)*100 + (m20/m60-1)*100);
+  const momentum=Math.max(-3,Math.min(3,ret5*100*0.7 + ret20*100*0.3));
+  const rsiScore=rr>=55&&rr<=72?1.5:rr<=45&&rr>=28?-1.5:0;
+  const volumeScore=volRatio>=1.25?(ret5>=0?1.2:-1.2):volRatio<=0.7?-.3:0;
+  const modelScore=Math.max(-4,Math.min(4,(p5.median*100*0.7+p20.median*100*0.3)));
+  let score=trend*1.4+momentum+rsiScore+volumeScore+modelScore;
+  score=Math.max(-10,Math.min(10,score));
+  const direction=score>=0?'看多':'看空';
+  const confidence=Math.min(99,Math.max(50,50+Math.abs(score)*4+p5.positive*10));
+  return {score,direction,confidence,price:c[last],ret5,ret20,rsi:rr,volRatio,p5,p20,date:rows[last].date};
+}
+function renderSwingRadar(items,status='完成'){
+  const box=$('swingList'); if(!box)return;
+  $('swingStatus').textContent=status;
+  if(!items.length){box.innerHTML='<div class="swing-empty">目前沒有足夠資料完成波段排序，請稍後再試。</div>';return;}
+  box.innerHTML=items.map((x,i)=>{
+    const cls=x.direction==='看多'?'swing-up':'swing-down';
+    const fc=x.p5.median*100;
+    return `<button class="swing-item" type="button" onclick="openFromScan('${esc(x.code)}')"><div class="swing-rank">${i+1}</div><div class="swing-name"><b>${esc(x.code)} ${esc(x.name)}</b><small>現價 ${fmt(x.price)}｜5日模型 ${fc>=0?'+':''}${fc.toFixed(1)}%｜RSI ${x.rsi.toFixed(0)}</small></div><div class="swing-signal ${cls}"><b>${x.direction}</b><small>波段分數 ${x.score.toFixed(1)}</small></div></button>`;
+  }).join('');
+}
+async function loadSwingRadar(){
+  try{
+    $('swingStatus').textContent='載入近期市場行情…';
+    await ensureStockDirectory();
+    const end=new Date(), start=new Date(); start.setDate(end.getDate()-150);
+    const rows=await getData('TaiwanStockPrice','',fmtDate(start),fmtDate(end));
+    const grouped=new Map();
+    rows.forEach(r=>{const id=String(r.stock_id||r.code||'').trim(); if(!/^\d{4,6}$/.test(id))return; if(!grouped.has(id))grouped.set(id,[]);grouped.get(id).push(r)});
+    const candidates=[];
+    for(const [code,rs] of grouped){
+      const name=await resolveStockName(code); if(!name)continue;
+      const x=swingSignalScore(rs); if(!x)continue;
+      candidates.push({...x,code,name});
+    }
+    candidates.sort((a,b)=>Math.abs(b.score)-Math.abs(a.score));
+    const top=candidates.slice(0,10);
+    renderSwingRadar(top,`已掃描 ${candidates.length.toLocaleString()} 檔｜更新 ${new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`);
+  }catch(e){
+    renderSwingRadar([],'市場資料暫時無法取得');
+  }
+}
+
 function forecastFeatures(rows,t){
   const c=rows.map(x=>+x.close), v=rows.map(x=>+x.Trading_Volume||0);
   if(t<70)return null;
@@ -998,6 +1070,8 @@ function renderForecast(rows){
   const [cls,label]=forecastTone(p5);$('fcStatus').className='forecast-status '+cls;setText('fcStatus',label);
   setText('fcReason',`以 ${rows.at(-1).date} 的型態與過去相似交易日比較：5日報酬中位數 ${pc(p5.median)}，歷史中 5日上漲比例約 ${prob.toFixed(0)}%。預估價格約 ${price(p5.median)}；20日中位數報酬 ${pc(p20.median)}。近期樣本的方向命中率約 ${Number.isFinite(hit)?(hit*100).toFixed(0)+'%':'無法估算'}，僅代表這套規則在最近歷史資料上的回測表現。`);
 }
+
+loadSwingRadar();
 
 </script>
 </body>
