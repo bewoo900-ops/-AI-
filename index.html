@@ -202,7 +202,7 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 
 
 <style id="today-support-cards-style">
-.today-move{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}.move-item{padding:14px;border-radius:15px;background:#081b2d;border:1px solid #1b405a}.move-item small{display:block;font-size:11px;color:#83a1b5;margin-bottom:6px}.move-item b{display:block;font-size:17px}.move-item span{display:block;margin-top:5px;color:#9ab3c4;font-size:11px;line-height:1.55}.sr-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.sr-card{padding:16px;border-radius:17px;background:linear-gradient(145deg,#0b2235,#081827);border:1px solid #1c4c68}.sr-card.support{border-color:#17605d}.sr-card.resistance{border-color:#31577b}.sr-title{font-weight:900;font-size:15px;margin-bottom:12px}.sr-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 0;border-top:1px solid #17364e}.sr-row:first-of-type{border-top:0;padding-top:0}.sr-row small{display:block;color:#819daf;font-size:10px}.sr-row strong{display:block;font-size:24px;margin-top:3px}.sr-row p{margin:4px 0 0;color:#8fa8b9;font-size:10px;line-height:1.5}.sr-dist{align-self:center;font-size:11px;padding:5px 8px;border-radius:99px;background:#102b40;color:#a9c7d9;white-space:nowrap}.sr-now{margin-top:11px;padding-top:10px;border-top:1px solid #17364e;color:#8fa8b9;font-size:11px}.sr-now b{color:#fff}.today-move .positive b{color:var(--green)}.today-move .negative b{color:var(--red)}.today-move .volume b{color:var(--cyan)}@media(max-width:620px){.today-move{grid-template-columns:1fr}.sr-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sr-card{padding:12px}.sr-row{grid-template-columns:1fr}.sr-dist{justify-self:start}.sr-row strong{font-size:21px}}
+.today-move{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:10px}.move-item{padding:14px;border-radius:15px;background:#081b2d;border:1px solid #1b405a}.move-item small{display:block;font-size:11px;color:#83a1b5;margin-bottom:6px}.move-item b{display:block;font-size:17px}.move-item span{display:block;margin-top:5px;color:#9ab3c4;font-size:11px;line-height:1.55}.sr-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.sr-card{padding:16px;border-radius:17px;background:linear-gradient(145deg,#0b2235,#081827);border:1px solid #1c4c68}.sr-card.support{border-color:#17605d}.sr-card.resistance{border-color:#31577b}.sr-title{font-weight:900;font-size:15px;margin-bottom:12px}.sr-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 0;border-top:1px solid #17364e}.sr-row:first-of-type{border-top:0;padding-top:0}.sr-row small{display:block;color:#819daf;font-size:10px}.sr-row strong{display:block;font-size:24px;margin-top:3px}.sr-row p{margin:4px 0 0;color:#8fa8b9;font-size:10px;line-height:1.5}.sr-dist{align-self:center;font-size:11px;padding:5px 8px;border-radius:99px;background:#102b40;color:#a9c7d9;white-space:nowrap}.sr-now{margin-top:11px;padding-top:10px;border-top:1px solid #17364e;color:#8fa8b9;font-size:11px}.sr-now b{color:#fff}.today-move .positive b{color:var(--green)}.today-move .negative b{color:var(--red)}.today-move .volume b{color:var(--cyan)}@media(max-width:620px){.today-move{grid-template-columns:1fr}.sr-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sr-card{padding:12px}.sr-row{grid-template-columns:1fr}.sr-dist{justify-self:start}.sr-row strong{font-size:21px}}
 </style>
 </head>
 <body id="home">
@@ -322,37 +322,13 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
       <div class="warning">分數是模型化的技術條件摘要，不是勝率，也不是投資報酬保證。</div>
     </section>
 
-    <section class="card">
-      <div class="sectionTitle"><h2>📍 交易計畫</h2><span>技術壓力與模型預測分開</span></div>
-      <div class="plan">
-        <div class="level"><small>觀察／進場區</small><b id="entry">—</b><em id="entryNote">—</em></div>
-        <div class="level"><small>風控停損</small><b class="down" id="stop">—</b><em id="stopNote">—</em></div>
-        <div class="level"><small>技術第一壓力</small><b class="up" id="target1">—</b><em id="target1Note">前波壓力</em></div>
-        <div class="level"><small>技術第二壓力</small><b class="up" id="target2">—</b><em id="target2Note">近 60 日高點</em></div>
-        <div class="level"><small>5日模型預測價</small><b class="up" id="planFc5">—</b><em id="planFc5Note">歷史相似型態</em></div>
-        <div class="level"><small>20日模型預測價</small><b class="up" id="planFc20">—</b><em id="planFc20Note">歷史相似型態</em></div>
-        <div class="level"><small>風險 / 報酬</small><b id="rr">—</b><em>以進場中位數估算</em></div>
-        <div class="level"><small>距離前高</small><b id="fromHigh">—</b><em>近 120 交易日</em></div>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="sectionTitle"><h2>📊 技術指標</h2><span>最近交易日</span></div>
-      <div class="metrics">
-        <div class="metric"><small>RSI(14)</small><strong id="rsi">—</strong></div>
-        <div class="metric"><small>MACD</small><strong id="macd">—</strong></div>
-        <div class="metric"><small>MA20</small><strong id="ma20">—</strong></div>
-        <div class="metric"><small>MA60</small><strong id="ma60">—</strong></div>
-        <div class="metric"><small>ATR(14)</small><strong id="atr">—</strong></div>
-        <div class="metric"><small>成交量 / 20日均量</small><strong id="volRatio">—</strong></div>
-      </div>
-    </section>
 <section class="card wide" id="todayMoveCard">
       <div class="sectionTitle"><h2>✨ 今天為什麼動？</h2><span id="todayMoveDate">最近交易日</span></div>
       <div class="today-move">
         <div class="move-item" id="todayCloseBox"><small>🟣 今日收盤</small><b id="todayClose">—</b><span id="todayCloseNote">等待行情資料</span></div>
         <div class="move-item volume"><small>🔵 成交量變化</small><b id="todayVolume">—</b><span id="todayVolumeNote">等待成交量資料</span></div>
         <div class="move-item"><small>🟢 技術訊號</small><b id="todayTech">—</b><span id="todayTechNote">等待技術分析</span></div>
+        <div class="move-item" id="todayInstBox"><small>🩷 今日法人買賣</small><b id="todayInst">—</b><span id="todayInstNote">等待法人資料</span></div>
       </div>
     </section>
 
@@ -710,6 +686,19 @@ function consecutiveDirection(rows,name){
   }
   return {dir:last,days:n};
 }
+function updateTodayInstitution(inst){
+  const rows=(inst||[]).filter(x=>x&&x.date).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  if(!rows.length){setText('todayInst','無資料');setText('todayInstNote','目前無法取得最近交易日法人資料。');return;}
+  const latest=rows.at(-1).date;
+  const day=rows.filter(x=>x.date===latest);
+  const namesWanted=['Foreign_Investor','Investment_Trust','Dealer_self','Dealer_Hedging'];
+  const net=day.filter(x=>namesWanted.includes(x.name)).reduce((z,x)=>z+(+x.buy||0)-(+x.sell||0),0);
+  const lots=net/1000;
+  setText('todayInst',(lots>0?'+':'')+Math.round(lots).toLocaleString()+' 張');
+  const box=$('todayInstBox'); if(box) box.className='move-item '+(net>0?'positive':net<0?'negative':'');
+  setText('todayInstNote',latest+' 三大法人合計'+(net>0?'買超 ':net<0?'賣超 ':'買賣超約 ')+Math.abs(Math.round(lots)).toLocaleString()+' 張。');
+}
+
 function updateInstitutionalView(inst){
   const foreign5=sumInst(inst,'Foreign_Investor',5), foreign20=sumInst(inst,'Foreign_Investor',20);
   const trust5=sumInst(inst,'Investment_Trust',5), trust20=sumInst(inst,'Investment_Trust',20);
@@ -797,7 +786,6 @@ function analyze(rows){
   setText('sym',rows.at(-1).stock_id);setText('name',names[rows.at(-1).stock_id]||'名稱同步中');refreshWatchButton();
   $('price').innerHTML=fmt(cur)+' <span class="'+(cur>=prev?'up':'down')+'" style="font-size:14px">'+(cur>=prev?'▲ ':'▼ ')+pct((cur/prev-1)*100)+'</span>';
   $('trendPill').textContent=label;$('trendPill').style.background=score>=60?'#10352e':score<45?'#3b1820':'#3b3313';
-  setText('rsi',fmt(rrsi,1));setText('macd',fmt(macd));setText('ma20',fmt(m20));setText('ma60',fmt(m60));setText('atr',fmt(aatr));setText('volRatio',fmt(vr,2)+'x');
   const dayPct=(cur/prev-1)*100;
   setText('todayMoveDate',rows.at(-1).date||'最近交易日');
   setText('todayClose',fmt(cur)+'｜'+pct(dayPct));
@@ -808,11 +796,6 @@ function analyze(rows){
   const techMain=cur>m20?(m20>m60?'站上 MA20・多頭結構':'站上 MA20'):(cur<m60?'跌破 MA20・偏弱':'MA20 下方整理');
   setText('todayTech',techMain);
   setText('todayTechNote',`RSI ${fmt(rrsi,1)}｜MACD ${fmt(macd)}｜距第一壓力 ${distance(cur,res1)}`);
-  setText('entry',fmt(entryLow)+' ~ '+fmt(entryHigh));setText('entryNote',entryLow<=cur?'靠近現價／回測區':'等待回落至區間');
-  setText('stop',fmt(stop));setText('stopNote','跌破此區代表原先邏輯失效');
-  setText('target1',fmt(target1));setText('target1Note',distance(cur,target1)+' / 前波壓力');
-  setText('target2',fmt(target2));setText('target2Note',distance(cur,target2)+' / 近60日高點');
-  setText('rr',rr.toFixed(2)+'R');setText('fromHigh',distance(cur,recentHigh));
   setText('res2',fmt(res2));setText('res2d',distance(cur,res2));setText('res1',fmt(res1));setText('res1d',distance(cur,res1));setText('now',fmt(cur));setText('sup1',fmt(sup1));setText('sup1d',distance(cur,sup1));setText('sup2',fmt(sup2));setText('sup2d',distance(cur,sup2));
   drawChart(rows.slice(-120),sma(close.slice(-120),20),sma(close.slice(-120),60));
   const pos=cur>m20&&m20>m60?'多頭排列':cur<m20&&m20<m60?'空頭排列':'整理階段';
@@ -930,6 +913,7 @@ async function loadStock(id){
     try{
       const inst=await getData('TaiwanStockInstitutionalInvestorsBuySell',id,datesBack(35),end);
       updateInstitutionalView(inst);
+      updateTodayInstitution(inst);
       const total5=['Foreign_Investor','Investment_Trust'].reduce((s,n)=>s+sumInst(inst,n,5),0)
         +sumInst(inst,'Dealer_self',5)+sumInst(inst,'Dealer_Hedging',5);
       setText('inst',fmtK(total5));
@@ -940,6 +924,7 @@ async function loadStock(id){
       ['foreign5','trust5','dealer5'].forEach(x=>{setText(x,'無資料');$(x).className='neutral'});
       ['foreign20','trust20','dealer20'].forEach(x=>setText(x,'20日：—'));
       setText('instOpinion','目前無法取得法人明細，技術分析仍可正常使用。');
+      setText('todayInst','無資料');setText('todayInstNote','目前無法取得最近交易日法人資料。');
       setText('inst','無資料');setText('instDir','—');
     }
     try{
@@ -1271,8 +1256,6 @@ function renderForecast(rows){
   const conf=p5.samples>=18&&spread<.12?'較高':p5.samples>=12&&spread<.20?'中等':'較低';
   setText('fcConfidence','模型信心：'+conf);
   setText('fc5Price',price(p5.median));setText('fc20Price',price(p20.median));setText('fcSamples',p5.samples+' 個相似樣本');
-  setText('planFc5',price(p5.median));setText('planFc5Note',`中位數 ${pc(p5.median)}｜25～75% ${pc(p5.q25)}～${pc(p5.q75)}`);
-  setText('planFc20',price(p20.median));setText('planFc20Note',`中位數 ${pc(p20.median)}｜25～75% ${pc(p20.q25)}～${pc(p20.q75)}`);
   const bt=walkForwardStats(rows,5,60);
   const hit=bt.direction;setText('fcHit',Number.isFinite(hit)?(hit*100).toFixed(0)+'%':'—');
   renderBacktestStats(rows);
