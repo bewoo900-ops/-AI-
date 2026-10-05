@@ -200,6 +200,10 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 .inst-rank{margin:18px 0;background:linear-gradient(135deg,#071a2a,#0a2133);border:1px solid #1d4d69;border-radius:20px;padding:18px}.rank-tabs,.rank-side{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.rank-btn{border:1px solid #214a65;background:#091d2f;color:#a9c5d8;border-radius:999px;padding:8px 12px;cursor:pointer}.rank-btn.active{background:linear-gradient(90deg,#1bdcff,#5c7dff);color:#04101a;border-color:transparent;font-weight:900}.rank-meta{color:#7895a9;font-size:11px;line-height:1.6;margin-top:10px}.rank-scroll{overflow:auto;margin-top:12px}.rank-table{width:100%;border-collapse:collapse;min-width:720px;font-size:12px}.rank-table th{color:#7895a9;text-align:left;padding:9px 7px;border-bottom:1px solid #1b405a}.rank-table td{padding:10px 7px;border-bottom:1px solid #132d41}.rank-table tr[data-code]{cursor:pointer}.rank-table tr[data-code]:hover{background:#0c2438}.rank-refresh{border:0;border-radius:11px;background:linear-gradient(90deg,#20d9ff,#5e7eff);font-weight:900;color:#04101a;cursor:pointer;padding:9px 13px}.rank-empty{padding:24px;text-align:center;color:#7895a9;border:1px dashed #21455f;border-radius:14px;margin-top:12px}
 </style>
 
+
+<style id="today-support-cards-style">
+.today-move{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}.move-item{padding:14px;border-radius:15px;background:#081b2d;border:1px solid #1b405a}.move-item small{display:block;font-size:11px;color:#83a1b5;margin-bottom:6px}.move-item b{display:block;font-size:17px}.move-item span{display:block;margin-top:5px;color:#9ab3c4;font-size:11px;line-height:1.55}.sr-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.sr-card{padding:16px;border-radius:17px;background:linear-gradient(145deg,#0b2235,#081827);border:1px solid #1c4c68}.sr-card.support{border-color:#17605d}.sr-card.resistance{border-color:#31577b}.sr-title{font-weight:900;font-size:15px;margin-bottom:12px}.sr-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 0;border-top:1px solid #17364e}.sr-row:first-of-type{border-top:0;padding-top:0}.sr-row small{display:block;color:#819daf;font-size:10px}.sr-row strong{display:block;font-size:24px;margin-top:3px}.sr-row p{margin:4px 0 0;color:#8fa8b9;font-size:10px;line-height:1.5}.sr-dist{align-self:center;font-size:11px;padding:5px 8px;border-radius:99px;background:#102b40;color:#a9c7d9;white-space:nowrap}.sr-now{margin-top:11px;padding-top:10px;border-top:1px solid #17364e;color:#8fa8b9;font-size:11px}.sr-now b{color:#fff}.today-move .positive b{color:var(--green)}.today-move .negative b{color:var(--red)}.today-move .volume b{color:var(--cyan)}@media(max-width:620px){.today-move{grid-template-columns:1fr}.sr-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sr-card{padding:12px}.sr-row{grid-template-columns:1fr}.sr-dist{justify-self:start}.sr-row strong{font-size:21px}}
+</style>
 </head>
 <body id="home">
 <div class="wrap">
@@ -343,16 +347,31 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
         <div class="metric"><small>成交量 / 20日均量</small><strong id="volRatio">—</strong></div>
       </div>
     </section>
-<section class="card">
-      <div class="sectionTitle"><h2>🧱 支撐與壓力</h2><span>近 60 日</span></div>
-      <table class="table">
-        <tr><th>類型</th><th>價格</th><th>距離</th><th>意義</th></tr>
-        <tr><td>強壓力</td><td id="res2">—</td><td id="res2d">—</td><td>近期高點區</td></tr>
-        <tr><td>壓力</td><td id="res1">—</td><td id="res1d">—</td><td>波段高點</td></tr>
-        <tr><td>現價</td><td id="now">—</td><td>—</td><td>目前位置</td></tr>
-        <tr><td>支撐</td><td id="sup1">—</td><td id="sup1d">—</td><td>MA20 / 低點</td></tr>
-        <tr><td>強支撐</td><td id="sup2">—</td><td id="sup2d">—</td><td>波段低點</td></tr>
-      </table>
+<section class="card wide" id="todayMoveCard">
+      <div class="sectionTitle"><h2>✨ 今天為什麼動？</h2><span id="todayMoveDate">最近交易日</span></div>
+      <div class="today-move">
+        <div class="move-item" id="todayCloseBox"><small>🟣 今日收盤</small><b id="todayClose">—</b><span id="todayCloseNote">等待行情資料</span></div>
+        <div class="move-item volume"><small>🔵 成交量變化</small><b id="todayVolume">—</b><span id="todayVolumeNote">等待成交量資料</span></div>
+        <div class="move-item"><small>🟢 技術訊號</small><b id="todayTech">—</b><span id="todayTechNote">等待技術分析</span></div>
+      </div>
+    </section>
+
+    <section class="card wide">
+      <div class="sectionTitle"><h2>🧱 支撐／壓力觀察</h2><span>近 60 日技術位置</span></div>
+      <div class="sr-grid">
+        <div class="sr-card support">
+          <div class="sr-title">🛡 支撐觀察</div>
+          <div class="sr-row"><div><small>第一支撐</small><strong id="sup1">—</strong><p id="sup1Note">MA20／近期低點形成的第一道防守</p></div><span class="sr-dist" id="sup1d">—</span></div>
+          <div class="sr-row"><div><small>第二支撐</small><strong id="sup2">—</strong><p id="sup2Note">近 60 日重要低點，跌破代表結構進一步轉弱</p></div><span class="sr-dist" id="sup2d">—</span></div>
+          <div class="sr-now">目前股價 <b id="now">—</b></div>
+        </div>
+        <div class="sr-card resistance">
+          <div class="sr-title">⚡ 壓力觀察</div>
+          <div class="sr-row"><div><small>第一壓力</small><strong id="res1">—</strong><p id="res1Note">前波高點／近期套牢壓力區</p></div><span class="sr-dist" id="res1d">—</span></div>
+          <div class="sr-row"><div><small>第二壓力</small><strong id="res2">—</strong><p id="res2Note">近 60 日高點，突破後才有機會打開上方空間</p></div><span class="sr-dist" id="res2d">—</span></div>
+          <div class="sr-now">壓力僅為技術位置，與模型預測價分開判讀。</div>
+        </div>
+      </div>
     </section>
 
     <section class="card">
@@ -779,6 +798,16 @@ function analyze(rows){
   $('price').innerHTML=fmt(cur)+' <span class="'+(cur>=prev?'up':'down')+'" style="font-size:14px">'+(cur>=prev?'▲ ':'▼ ')+pct((cur/prev-1)*100)+'</span>';
   $('trendPill').textContent=label;$('trendPill').style.background=score>=60?'#10352e':score<45?'#3b1820':'#3b3313';
   setText('rsi',fmt(rrsi,1));setText('macd',fmt(macd));setText('ma20',fmt(m20));setText('ma60',fmt(m60));setText('atr',fmt(aatr));setText('volRatio',fmt(vr,2)+'x');
+  const dayPct=(cur/prev-1)*100;
+  setText('todayMoveDate',rows.at(-1).date||'最近交易日');
+  setText('todayClose',fmt(cur)+'｜'+pct(dayPct));
+  $('todayCloseBox').className='move-item '+(dayPct>0?'positive':dayPct<0?'negative':'');
+  setText('todayCloseNote',dayPct>0?'今日收紅，較前一交易日上漲。':dayPct<0?'今日收黑，較前一交易日下跌。':'今日收盤與前一交易日接近持平。');
+  setText('todayVolume',fmt(vr,2)+' 倍');
+  setText('todayVolumeNote',vr>=1.2?'成交量高於近 20 日均量，市場參與度明顯放大。':vr<=.8?'成交量約為近 20 日均量的 '+fmt(vr,2)+' 倍，量能偏小。':'成交量接近近 20 日平均水準。');
+  const techMain=cur>m20?(m20>m60?'站上 MA20・多頭結構':'站上 MA20'):(cur<m60?'跌破 MA20・偏弱':'MA20 下方整理');
+  setText('todayTech',techMain);
+  setText('todayTechNote',`RSI ${fmt(rrsi,1)}｜MACD ${fmt(macd)}｜距第一壓力 ${distance(cur,res1)}`);
   setText('entry',fmt(entryLow)+' ~ '+fmt(entryHigh));setText('entryNote',entryLow<=cur?'靠近現價／回測區':'等待回落至區間');
   setText('stop',fmt(stop));setText('stopNote','跌破此區代表原先邏輯失效');
   setText('target1',fmt(target1));setText('target1Note',distance(cur,target1)+' / 前波壓力');
