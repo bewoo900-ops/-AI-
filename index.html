@@ -1046,15 +1046,29 @@ function drawIntraday(rows){
   setText('intraPrice',fmt(last.price));setText('intraTime',last.time||'最新一筆');setText('intraHighLow',fmt(high)+' / '+fmt(low));setText('intraVolume',Math.round(vol).toLocaleString());setText('intraCount',data.length.toLocaleString()+' 筆成交資料');
 }
 async function loadIntraday(id){
-  setText('intradayStatus','讀取盤中資料…');
-  try{
-    const today=new Date().toISOString().slice(0,10);
-    const rows=await getData('TaiwanStockPriceTick',id,today,today);
-    drawIntraday(rows);
-    const d=rows?.at(-1)?.date||today;setText('intradayStatus','盤中資料 '+d);
-  }catch(e){
-    drawIntraday([]);setText('intradayStatus','盤中資料暫時無法取得');
+  setText('intradayStatus','讀取最近交易日分時資料…');
+  // 凌晨、週末或休市時「今天」本來就沒有 tick；往前找最近有成交資料的交易日。
+  let lastErr=null;
+  for(let back=0;back<=10;back++){
+    const d=new Date(); d.setDate(d.getDate()-back);
+    if(d.getDay()===0||d.getDay()===6) continue;
+    const day=d.toISOString().slice(0,10);
+    try{
+      const rows=await getData('TaiwanStockPriceTick',id,day,day);
+      const valid=normalizeIntradayRows(rows);
+      if(valid.length){
+        drawIntraday(rows);
+        const dataDate=rows.find(x=>x?.date)?.date||day;
+        const isToday=dataDate===new Date().toISOString().slice(0,10);
+        setText('intradayStatus',(isToday?'今日盤中':'最近交易日')+' '+dataDate+'｜'+valid.length.toLocaleString()+' 筆');
+        return;
+      }
+    }catch(e){lastErr=e;}
   }
+  drawIntraday([]);
+  setText('intradayStatus','最近交易日分時資料暫時無法取得');
+  const empty=$('intradayEmpty');
+  if(empty) empty.textContent='目前資料源沒有回傳最近交易日的逐筆成交資料；日線與其他分析仍可正常使用。';
 }
 
 async function loadStock(id){
