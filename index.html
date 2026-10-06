@@ -204,6 +204,10 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 <style id="today-support-cards-style">
 .today-move{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:10px}.move-item{padding:14px;border-radius:15px;background:#081b2d;border:1px solid #1b405a}.move-item small{display:block;font-size:11px;color:#83a1b5;margin-bottom:6px}.move-item b{display:block;font-size:17px}.move-item span{display:block;margin-top:5px;color:#9ab3c4;font-size:11px;line-height:1.55}.sr-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.sr-card{padding:16px;border-radius:17px;background:linear-gradient(145deg,#0b2235,#081827);border:1px solid #1c4c68}.sr-card.support{border-color:#17605d}.sr-card.resistance{border-color:#31577b}.sr-title{font-weight:900;font-size:15px;margin-bottom:12px}.sr-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 0;border-top:1px solid #17364e}.sr-row:first-of-type{border-top:0;padding-top:0}.sr-row small{display:block;color:#819daf;font-size:10px}.sr-row strong{display:block;font-size:24px;margin-top:3px}.sr-row p{margin:4px 0 0;color:#8fa8b9;font-size:10px;line-height:1.5}.sr-dist{align-self:center;font-size:11px;padding:5px 8px;border-radius:99px;background:#102b40;color:#a9c7d9;white-space:nowrap}.sr-now{margin-top:11px;padding-top:10px;border-top:1px solid #17364e;color:#8fa8b9;font-size:11px}.sr-now b{color:#fff}.today-move .positive b{color:var(--green)}.today-move .negative b{color:var(--red)}.today-move .volume b{color:var(--cyan)}@media(max-width:620px){.today-move{grid-template-columns:1fr}.sr-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sr-card{padding:12px}.sr-row{grid-template-columns:1fr}.sr-dist{justify-self:start}.sr-row strong{font-size:21px}}
 </style>
+
+<style id="valuation-style">
+.valuation-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}.valuation-box{padding:14px;border-radius:15px;background:#081b2d;border:1px solid #1b405a}.valuation-box small{display:block;color:#83a1b5;font-size:10px}.valuation-box strong{display:block;font-size:22px;margin-top:5px}.valuation-box span{display:block;color:#91aabd;font-size:10px;margin-top:5px;line-height:1.5}.valuation-target{border-color:#2a6483;background:linear-gradient(145deg,#0c263c,#0a1a2b)}.valuation-note{margin-top:12px;padding:12px;border-radius:13px;background:#0b1f32;border:1px solid #17384f;color:#a9c2d4;font-size:11px;line-height:1.7}@media(max-width:700px){.valuation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
 </head>
 <body id="home">
 <div class="wrap">
@@ -377,6 +381,18 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
       <div class="warning">基本面資料以公開財務資料為主；不同公司財報欄位、公告時間與資料更新速度可能不同。估值指標僅供研究參考，不代表買賣建議。</div>
     </section>
 
+    <section class="card wide" id="valuationModel">
+      <div class="sectionTitle"><h2>🧮 EPS 合理價估值</h2><span>預估 EPS × 產業合理本益比</span></div>
+      <div class="valuation-grid">
+        <div class="valuation-box"><small id="valYear1Label">明年預估 EPS</small><strong id="valEPS1">—</strong><span id="valEPS1Note">等待基本面資料</span></div>
+        <div class="valuation-box"><small id="valYear2Label">後年預估 EPS</small><strong id="valEPS2">—</strong><span id="valEPS2Note">等待基本面資料</span></div>
+        <div class="valuation-box"><small>產業合理本益比</small><strong id="valPE">—</strong><span id="valIndustry">等待產業分類</span></div>
+        <div class="valuation-box valuation-target"><small id="valTargetLabel">明年合理價</small><strong id="valTarget">—</strong><span id="valTargetRange">EPS × 合理 P/E</span></div>
+      </div>
+      <div class="valuation-note" id="valOpinion">這裡使用公開財務資料建立「模型預估 EPS」，再依產業給予參考本益比區間。它不是法人／券商 EPS 共識或目標價；若缺少足夠 EPS 資料，會顯示資料不足。</div>
+      <div class="warning">⚠️ 合理價是估值情境，不代表股價一定會到達。景氣循環、公司成長、利率與市場風險都可能使合理本益比改變。</div>
+    </section>
+
     <section class="card">
       <div class="sectionTitle"><h2>🏦 法人動向</h2><span>5 日／20 日</span></div>
       <div class="inst-grid">
@@ -402,18 +418,6 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
       <div class="warning">這裡是依公開法人買賣超資料產生的「動向解讀」，不是券商研究報告、目標價或法人內部看法；法人資料也可能在公布後微調。</div>
     </section>
 
-
-    <section class="card">
-      <div class="sectionTitle"><h2>📅 季底／月底作帳觀察</h2><span>季節性參考</span></div>
-      <div class="season-grid">
-        <div class="season-box"><small>本季季底</small><strong id="quarterEnd">—</strong></div>
-        <div class="season-box"><small>季底前5交易日</small><strong id="quarterWindow">—</strong></div>
-        <div class="season-box"><small>年度最後交易日</small><strong id="yearEnd">—</strong></div>
-        <div class="season-box"><small>目前位置</small><strong id="seasonStatus">—</strong></div>
-      </div>
-      <div class="inst-opinion"><b>怎麼看：</b><span id="seasonOpinion">季底／月底作帳屬市場季節性現象，不代表特定股票一定上漲或下跌。可搭配法人、成交量、價格趨勢一起觀察。</span></div>
-      <div class="ref-note">「作帳」不是保證行情；這裡只把季底、月底等時間節點標出來，避免把季節性直接當成交易訊號。</div>
-    </section>
 
     <section class="card">
       <div class="sectionTitle"><h2>🎤 法說會／公司事件</h2><span>官方資料入口</span></div>
@@ -847,6 +851,52 @@ function renderQuarterTable(fin){
   if(!dates.length){body.innerHTML='<tr><td colspan="5">暫無季度財務資料</td></tr>';return}
   body.innerHTML=dates.map(d=>{const at=rows=>latestByDate(rows.filter(x=>x.date===d));const e=numField(at(epsRows),['value','Value']);const rv=numField(at(revRows),['value','Value']);const gp=numField(at(gpRows),['value','Value']);const op=numField(at(opRows),['value','Value']);return `<tr><td>${esc(d)}</td><td>${fmt(e)}</td><td>${fmtFundMoney(rv)}</td><td>${Number.isFinite(rv)&&Number.isFinite(gp)?fmt(gp/rv*100,1)+'%':'—'}</td><td>${Number.isFinite(rv)&&Number.isFinite(op)?fmt(op/rv*100,1)+'%':'—'}</td></tr>`}).join('');
 }
+
+function industryPE(industry){
+  const x=String(industry||'').toLowerCase();
+  const rules=[
+    [['半導體','ic設計','積體電路'],[18,26]],
+    [['電腦','週邊','電子零組件','光電','通信','網通','資訊服務'],[16,24]],
+    [['生技','醫療'],[22,32]],
+    [['金融','銀行','保險','證券'],[10,15]],
+    [['航運','運輸'],[7,12]],
+    [['鋼鐵','塑膠','化學','水泥','玻璃','造紙'],[9,14]],
+    [['食品','百貨','零售','觀光','餐旅'],[15,22]],
+    [['建材','營造','不動產'],[9,14]],
+    [['汽車','電機','機械'],[13,20]]
+  ];
+  for(const [keys,range] of rules) if(keys.some(k=>x.includes(k))) return range;
+  return [12,20];
+}
+function stockIndustry(id){
+  const r=stockDirectory.get(String(id))||{};
+  return r.industry_category||r.industry||r.industry_name||r.category||'一般產業';
+}
+function epsSeries(fin){
+  const rows=pickType(fin,['eps']).slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
+  const byDate=new Map(); rows.forEach(r=>{const v=numField(r,['value','Value','amount','Amount']);if(r.date&&Number.isFinite(v))byDate.set(r.date,v)});
+  return [...byDate].map(([date,value])=>({date,value})).slice(-8);
+}
+function renderValuationModel(id,fin,yoy,cur){
+  const series=epsSeries(fin), year1=new Date().getFullYear()+1, year2=year1+1;
+  setText('valYear1Label',year1+' 預估 EPS'); setText('valYear2Label',year2+' 預估 EPS'); setText('valTargetLabel',year1+' 合理價');
+  const industry=stockIndustry(id); setText('sumIndustry',industry);
+  const [peLo,peHi]=industryPE(industry), peMid=(peLo+peHi)/2; setText('valPE',peLo+'～'+peHi+' 倍'); setText('valIndustry',industry+'｜中位數 '+fmt(peMid,1)+' 倍');
+  if(series.length<4){setText('valEPS1','資料不足');setText('valEPS2','資料不足');setText('valTarget','—');setText('valTargetRange','需要至少 4 期 EPS 資料');setText('valOpinion','目前 EPS 歷史資料不足，暫不硬算合理價，避免產生失真的目標價格。');return;}
+  const last4=series.slice(-4).map(x=>x.value), ttm=last4.reduce((a,b)=>a+b,0);
+  let growth=Number.isFinite(yoy)?Math.max(-.25,Math.min(.35,yoy/100)):.08;
+  const epsTrend=series.length>=8?series.slice(-4).reduce((a,b)=>a+b.value,0)-series.slice(-8,-4).reduce((a,b)=>a+b.value,0):0;
+  if(series.length>=8 && ttm!==0){const eg=epsTrend/Math.max(Math.abs(series.slice(-8,-4).reduce((a,b)=>a+b.value,0)),.01);growth=growth*.55+Math.max(-.25,Math.min(.35,eg))*.45;}
+  const eps1=Math.max(0,ttm*(1+growth)), eps2=Math.max(0,eps1*(1+growth*.7));
+  const target=eps1*peMid, low=eps1*peLo, high=eps1*peHi;
+  setText('valEPS1',fmt(eps1,2)); setText('valEPS2',fmt(eps2,2));
+  setText('valEPS1Note','近 4 期 EPS '+fmt(ttm,2)+'，模型成長假設 '+pct(growth*100));
+  setText('valEPS2Note','第二年成長假設降為 '+pct(growth*.7*100));
+  setText('valTarget',fmt(target,1)+' 元'); setText('valTargetRange',fmt(low,1)+'～'+fmt(high,1)+' 元｜中位 '+fmt(peMid,1)+' 倍');
+  const upside=Number.isFinite(cur)&&cur>0?(target/cur-1)*100:NaN;
+  setText('valOpinion',`${year1} 模型預估 EPS 約 ${fmt(eps1,2)} 元；${industry} 參考本益比 ${peLo}～${peHi} 倍，因此估值區間約 ${fmt(low,1)}～${fmt(high,1)} 元，中位合理價約 ${fmt(target,1)} 元${Number.isFinite(upside)?`，相對現價約 ${pct(upside)}`:''}。EPS 為本站依近 4 期 EPS、營收年增與 EPS 趨勢推估，不是券商共識。`);
+}
+
 async function updateFundamentals(id,end){
   ['fundRevenueYoY','fundEPS','fundGrossMargin','fundOperatingMargin','fundROE','fundPER','fundPBR','fundYield'].forEach(x=>setFund(x,'讀取中…','fund-loading'));
   setText('fundOpinion','正在取得營收、財報與估值資料…');
@@ -874,6 +924,7 @@ async function updateFundamentals(id,end){
     setFund('fundGrossMargin',Number.isFinite(gross)?fmt(gross,1)+'%':'—');setFund('fundOperatingMargin',Number.isFinite(op)?fmt(op,1)+'%':'—');setFund('fundROE',Number.isFinite(roe)?fmt(roe,1)+'%':'—');
     setFund('fundPER',Number.isFinite(pe)?fmt(pe,2):'—');setText('fundPERDate',lp?.date||'—');setFund('fundPBR',Number.isFinite(pbr)?fmt(pbr,2):'—');setFund('fundYield',Number.isFinite(dy)?fmt(dy,2)+'%':'—');
     renderQuarterTable(fin);
+    renderValuationModel(id,fin,yoy,window.__currentPrice);
     setText('fundDate','資料更新：'+(lr?.date||lp?.date||'—'));
     const notes=[]; if(Number.isFinite(yoy))notes.push('最新月營收年增 '+pct(yoy)); if(Number.isFinite(gross))notes.push('毛利率 '+fmt(gross,1)+'%'); if(Number.isFinite(op))notes.push('營益率 '+fmt(op,1)+'%'); if(Number.isFinite(roe))notes.push('ROE '+fmt(roe,1)+'%');
     setText('fundOpinion',notes.length?'基本面快照：'+notes.join('、')+'。建議搭配近四季趨勢、法人動向與公司公告一起判讀。':'目前取得的基本面欄位有限，請以 MOPS／公司公告為準。');
@@ -881,6 +932,7 @@ async function updateFundamentals(id,end){
     ['fundRevenueYoY','fundEPS','fundGrossMargin','fundOperatingMargin','fundROE','fundPER','fundPBR','fundYield'].forEach(x=>setFund(x,'無資料','neutral'));
     setText('fundOpinion','基本面資料目前無法取得；技術面仍可正常使用。若瀏覽器阻擋 FinMind 跨網域請求，正式版建議改用後端 Proxy。');
     $('fundQuarterRows').innerHTML='<tr><td colspan="5">目前無法取得季度資料</td></tr>';
+    setText('valEPS1','無資料');setText('valEPS2','無資料');setText('valPE','—');setText('valTarget','—');setText('valOpinion','目前無法取得足夠財務資料，因此不計算 EPS 合理價。');
   }
 }
 
@@ -904,7 +956,8 @@ async function loadStock(id){
     setText('sym', id);
     setText('name', stockName);
     setText('sumCompany', id+'｜'+stockName);
-    analyze(price);
+    const analyzed=analyze(price);
+    window.__currentPrice=analyzed?.cur;
     renderForecast(price);
     updateEventCompany(id);
     // 基本面資料：失敗不影響技術分析。
