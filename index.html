@@ -419,23 +419,32 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
     </section>
 
 
-    <section class="card">
-      <div class="sectionTitle"><h2>🎤 法說會／公司事件</h2><span>官方資料入口</span></div>
+    <section class="card wide" id="industryGrowthCard">
+      <div class="sectionTitle"><h2>🏭 公司產業與成長趨勢</h2><span id="growthStatus">產業定位＋基本面＋市場題材</span></div>
       <div class="event-grid">
         <div class="event-card">
-          <span class="event-badge">TWSE</span>
-          <h3 id="eventCompany">目前查詢股票</h3>
-          <p>上市公司法人說明會、場次與直播資訊可由證交所官方活動頁查詢。</p>
-          <a class="event-link" href="https://www.twse.com.tw/zh/news/eventList" target="_blank" rel="noopener">查看 TWSE 法說會行事曆 ↗</a>
+          <span class="event-badge">產業定位</span>
+          <h3 id="growthCompany">目前查詢股票</h3>
+          <p id="growthIndustry">等待公司產業資料。</p>
+          <p id="growthBusiness">系統會依公司產業分類，整理主要產業定位與可能的需求來源。</p>
         </div>
         <div class="event-card">
-          <span class="event-badge">MOPS</span>
-          <h3>公開資訊觀測站</h3>
-          <p>可進一步查看公司重大訊息、財報、每月營收與法人說明會資料。</p>
-          <a class="event-link" href="https://mops.twse.com.tw/mops/web/" target="_blank" rel="noopener">查看 MOPS ↗</a>
+          <span class="event-badge">成長動能</span>
+          <h3 id="growthTrend">等待基本面</h3>
+          <p id="growthDrivers">將結合月營收 YoY、EPS 趨勢、獲利率與法人籌碼判斷目前成長狀態。</p>
+        </div>
+        <div class="event-card">
+          <span class="event-badge">🔥 產業時事題材</span>
+          <h3 id="growthTheme">等待產業分類</h3>
+          <p id="growthThemeNote">依目前產業分類比對 AI、先進封裝、光通訊、記憶體、國防、航運、生技等市場發展主題；這裡是產業關聯判讀，不會捏造即時新聞。</p>
+        </div>
+        <div class="event-card">
+          <span class="event-badge">風險觀察</span>
+          <h3 id="growthRisk">等待資料</h3>
+          <p id="growthRiskNote">同步提醒景氣循環、估值過高、營收轉弱或法人賣壓等可能風險。</p>
         </div>
       </div>
-      <div class="ref-note">法說會日期與內容以公司及 TWSE／MOPS 公告為準；網站不把法說會內容自動解讀成「利多」或「利空」。</div>
+      <div class="ref-note" id="growthNote">產業題材用來理解公司可能受惠的方向，不代表公司一定取得訂單或股價一定上漲；即時重大事件仍應以公司、TWSE／MOPS 公告為準。</div>
     </section>
 <section class="card wide" id="forecastCenter">
   <div class="sectionTitle">
@@ -660,8 +669,47 @@ function updateSeasonality(){
     : '目前距離季底仍有一段時間，季底作帳因素的參考權重可先放低，優先看基本面、法人與技術結構。';
   setText('seasonOpinion',op);
 }
-function updateEventCompany(id){
-  setText('eventCompany','股票 '+id+'｜法說會／公司事件');
+function industryTheme(industry,name=''){
+  const x=(String(industry||'')+' '+String(name||'')).toLowerCase();
+  const rules=[
+    [['半導體','積體電路','ic設計'],['AI／高效能運算、先進製程與先進封裝','高']],
+    [['光電','光通訊','通信','網通'],['AI 資料中心、CPO／矽光子與高速網路升級','高']],
+    [['電腦','週邊','資訊服務'],['AI 伺服器、雲端資料中心與企業 AI 投資','高']],
+    [['電子零組件'],['AI 伺服器、電源／散熱／高速傳輸與電子供應鏈升級','中高']],
+    [['記憶體','dram','nand'],['AI 記憶體需求、HBM 與記憶體景氣循環','高']],
+    [['航運','運輸'],['運價、全球貿易、供應鏈與地緣政治變化','高']],
+    [['生技','醫療'],['新藥／醫材進度、授權與高齡醫療需求','高']],
+    [['金融','銀行','保險','證券'],['利率循環、資本市場成交量與金融資產評價','中']],
+    [['汽車'],['電動車、車用電子與智慧駕駛供應鏈','中高']],
+    [['電機','機械'],['AI／半導體擴產、自動化與電網基礎建設','中']],
+    [['鋼鐵','塑膠','化學','水泥'],['中國需求、原物料報價與全球景氣循環','中']],
+    [['食品','百貨','零售','觀光','餐旅'],['內需消費、觀光人流與成本變化','中']]
+  ];
+  for(const [keys,v] of rules) if(keys.some(k=>x.includes(k))) return v;
+  return ['目前沒有明確對應的熱門產業題材，優先追蹤公司營收、獲利與重大公告','低'];
+}
+function renderIndustryGrowth(id,{yoy=NaN,eps=NaN,gross=NaN,op=NaN,inst5=NaN}={}){
+  const industry=stockIndustry(id), name=names[id]||('股票 '+id);
+  setText('growthCompany',id+' '+name);
+  setText('growthIndustry','所屬產業：'+industry+'。');
+  setText('growthBusiness',`目前以「${industry}」的產業循環與需求變化作為公司成長背景，並搭配實際營收、EPS 與獲利率確認是否真的受惠。`);
+  const signals=[]; let score=0, n=0;
+  if(Number.isFinite(yoy)){n++;score+=yoy>10?2:yoy>0?1:yoy<-10?-2:-1;signals.push('營收 YoY '+pct(yoy));}
+  if(Number.isFinite(eps)){n++;score+=eps>0?1:-2;signals.push('EPS '+fmt(eps));}
+  if(Number.isFinite(gross)){signals.push('毛利率 '+fmt(gross,1)+'%');}
+  if(Number.isFinite(op)){n++;score+=op>10?1:op<0?-2:0;signals.push('營益率 '+fmt(op,1)+'%');}
+  if(Number.isFinite(inst5)){n++;score+=inst5>0?1:inst5<0?-1:0;signals.push('法人5日 '+fmtSignedK(inst5));}
+  const trend=!n?'🟡 資料待補':score>=3?'🟢 成長轉強':score>=0?'🟡 成長觀察':'🔴 成長轉弱';
+  setText('growthTrend',trend);
+  setText('growthDrivers',signals.length?signals.join('｜')+'。':'目前基本面欄位不足，暫不硬判斷成長趨勢。');
+  const [theme,rel]=industryTheme(industry,name);
+  setText('growthTheme',theme); setText('growthThemeNote','與公司產業關聯度：'+rel+'。此處為產業發展主題比對，不代表公司已取得相關訂單。');
+  let risk='留意估值與景氣循環';
+  if(Number.isFinite(yoy)&&yoy<0) risk='營收年增轉負，需確認需求是否放緩';
+  else if(Number.isFinite(op)&&op<0) risk='營業利益率為負，獲利品質需優先觀察';
+  else if(Number.isFinite(inst5)&&inst5<0) risk='近期法人偏賣，題材與籌碼可能不同步';
+  setText('growthRisk',risk);
+  setText('growthRiskNote','熱門題材只能當背景，仍需確認營收／EPS 是否跟上，以及目前股價是否已提前反映成長預期。');
 }
 function fmtSignedK(n){
   const sign=n>0?'+':n<0?'−':'';
@@ -925,6 +973,7 @@ async function updateFundamentals(id,end){
     setFund('fundPER',Number.isFinite(pe)?fmt(pe,2):'—');setText('fundPERDate',lp?.date||'—');setFund('fundPBR',Number.isFinite(pbr)?fmt(pbr,2):'—');setFund('fundYield',Number.isFinite(dy)?fmt(dy,2)+'%':'—');
     renderQuarterTable(fin);
     renderValuationModel(id,fin,yoy,window.__currentPrice);
+    renderIndustryGrowth(id,{yoy,eps,gross,op});
     setText('fundDate','資料更新：'+(lr?.date||lp?.date||'—'));
     const notes=[]; if(Number.isFinite(yoy))notes.push('最新月營收年增 '+pct(yoy)); if(Number.isFinite(gross))notes.push('毛利率 '+fmt(gross,1)+'%'); if(Number.isFinite(op))notes.push('營益率 '+fmt(op,1)+'%'); if(Number.isFinite(roe))notes.push('ROE '+fmt(roe,1)+'%');
     setText('fundOpinion',notes.length?'基本面快照：'+notes.join('、')+'。建議搭配近四季趨勢、法人動向與公司公告一起判讀。':'目前取得的基本面欄位有限，請以 MOPS／公司公告為準。');
@@ -933,6 +982,7 @@ async function updateFundamentals(id,end){
     setText('fundOpinion','基本面資料目前無法取得；技術面仍可正常使用。若瀏覽器阻擋 FinMind 跨網域請求，正式版建議改用後端 Proxy。');
     $('fundQuarterRows').innerHTML='<tr><td colspan="5">目前無法取得季度資料</td></tr>';
     setText('valEPS1','無資料');setText('valEPS2','無資料');setText('valPE','—');setText('valTarget','—');setText('valOpinion','目前無法取得足夠財務資料，因此不計算 EPS 合理價。');
+    renderIndustryGrowth(id,{});
   }
 }
 
@@ -959,7 +1009,6 @@ async function loadStock(id){
     const analyzed=analyze(price);
     window.__currentPrice=analyzed?.cur;
     renderForecast(price);
-    updateEventCompany(id);
     // 基本面資料：失敗不影響技術分析。
     await updateFundamentals(id,end);
     // 法人資料：外資、投信、自營商分開計算；失敗不影響技術分析.
@@ -972,6 +1021,9 @@ async function loadStock(id){
       setText('inst',fmtK(total5));
       setText('instDir',total5>0?'偏買超':total5<0?'偏賣超':'接近中性');
       setText('sumInst',fmtSignedK(total5)); addSummaryTag(total5>0?'法人5日偏買':'法人5日偏賣');
+      // 把法人籌碼補進公司成長區塊的風險／動能判讀。
+      const gt=$('growthDrivers'); if(gt) gt.textContent += '｜法人5日 '+fmtSignedK(total5)+'。';
+      if(total5<0){setText('growthRisk','近期法人偏賣，題材與籌碼可能不同步');}
       $('instDir').className=total5>0?'up':total5<0?'down':'neutral';
     }catch(e){
       ['foreign5','trust5','dealer5'].forEach(x=>{setText(x,'無資料');$(x).className='neutral'});
