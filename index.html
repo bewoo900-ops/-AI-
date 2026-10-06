@@ -208,6 +208,18 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
 <style id="valuation-style">
 .valuation-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}.valuation-box{padding:14px;border-radius:15px;background:#081b2d;border:1px solid #1b405a}.valuation-box small{display:block;color:#83a1b5;font-size:10px}.valuation-box strong{display:block;font-size:22px;margin-top:5px}.valuation-box span{display:block;color:#91aabd;font-size:10px;margin-top:5px;line-height:1.5}.valuation-target{border-color:#2a6483;background:linear-gradient(145deg,#0c263c,#0a1a2b)}.valuation-note{margin-top:12px;padding:12px;border-radius:13px;background:#0b1f32;border:1px solid #17384f;color:#a9c2d4;font-size:11px;line-height:1.7}@media(max-width:700px){.valuation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
+
+<style id="two-column-intraday-style">
+/* 個股分析主面板：桌機固定雙欄，手機自動單欄 */
+#dashboard{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+#dashboard>.card,#dashboard>section.card{grid-column:auto!important;min-width:0}
+#dashboard>.intraday-wide{grid-column:1/-1!important}
+.intraday-grid{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(210px,.8fr);gap:12px;align-items:stretch}
+.intraday-chart-wrap{position:relative;min-height:330px;border-radius:15px;background:#071827;border:1px solid #173d57;padding:10px;overflow:hidden}
+#intradayChart{display:block;width:100%;height:330px}
+.intraday-side{display:grid;grid-template-columns:1fr;gap:9px}.intraday-stat{padding:13px;border-radius:13px;background:#0c2237;border:1px solid #173d57}.intraday-stat small{display:block;color:var(--muted);font-size:10px}.intraday-stat b{display:block;font-size:19px;margin-top:5px}.intraday-stat span{display:block;color:#7895a9;font-size:10px;margin-top:4px;line-height:1.45}.intraday-legend{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 0;color:#829eb1;font-size:10px}.intraday-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#7895a9;font-size:12px;text-align:center;padding:25px}.intraday-refresh{border:1px solid #214a65;background:#091d2f;color:#a9c5d8;border-radius:999px;padding:6px 10px;cursor:pointer;font-size:10px}
+@media(max-width:850px){#dashboard{grid-template-columns:1fr}.intraday-grid{grid-template-columns:1fr}.intraday-chart-wrap{min-height:290px}#intradayChart{height:290px}}
+</style>
 </head>
 <body id="home">
 <div class="wrap">
@@ -300,6 +312,23 @@ button,input,select{font:inherit}.wrap{max-width:1250px;margin:auto;padding:18px
         <span><i class="dot" style="background:#ffd76a"></i>MA20</span>
         <span><i class="dot" style="background:#ff65bd"></i>MA60</span>
       </div>
+    </section>
+
+    <section class="card intraday-wide" id="intradayPanel">
+      <div class="sectionTitle"><h2>📈 個股即時走勢＋成交量</h2><span id="intradayStatus">選擇股票後載入</span></div>
+      <div class="intraday-grid">
+        <div>
+          <div class="intraday-chart-wrap"><svg id="intradayChart" viewBox="0 0 900 330" preserveAspectRatio="none"></svg><div class="intraday-empty" id="intradayEmpty">等待即時成交資料…</div></div>
+          <div class="intraday-legend"><span>— 分時成交價</span><span>▮ 每筆／分時成交量</span><span>資料來源可用時自動更新</span></div>
+        </div>
+        <div class="intraday-side">
+          <div class="intraday-stat"><small>最新成交</small><b id="intraPrice">—</b><span id="intraTime">—</span></div>
+          <div class="intraday-stat"><small>今日高／低</small><b id="intraHighLow">—</b><span>依目前取得的盤中資料</span></div>
+          <div class="intraday-stat"><small>累計成交量</small><b id="intraVolume">—</b><span id="intraCount">—</span></div>
+          <button class="intraday-refresh" id="intradayRefresh" type="button">🔄 更新即時走勢</button>
+        </div>
+      </div>
+      <div class="warning">盤中資料可能因交易所／資料來源更新頻率而有延遲；休市時顯示最近可取得的盤中資料，不代表即時報價。</div>
     </section>
 
     <section class="card wide" id="stockSummary">
@@ -986,6 +1015,48 @@ async function updateFundamentals(id,end){
   }
 }
 
+
+function normalizeIntradayRows(rows){
+  return (rows||[]).map((r,i)=>{
+    const price=Number(r.deal_price??r.price??r.close??r.Close??r.DealPrice);
+    const volume=Number(r.volume??r.Volume??r.deal_volume??r.Trading_Volume??r.trade_volume??0);
+    const time=String(r.Time??r.time??r.trade_time??r.date??'').trim();
+    return {price,volume:Number.isFinite(volume)?volume:0,time,index:i};
+  }).filter(x=>Number.isFinite(x.price)&&x.price>0);
+}
+function drawIntraday(rows){
+  const svg=$('intradayChart'), empty=$('intradayEmpty'); if(!svg)return;
+  const data=normalizeIntradayRows(rows);
+  if(!data.length){svg.innerHTML='';if(empty){empty.style.display='flex';empty.textContent='目前沒有可取得的盤中成交資料';}return;}
+  if(empty)empty.style.display='none';
+  // 大量 tick 壓縮成最多 180 個時間桶，避免手機 SVG 過重。
+  const maxPts=180, step=Math.max(1,Math.ceil(data.length/maxPts)), pts=[];
+  for(let i=0;i<data.length;i+=step){const g=data.slice(i,i+step), last=g.at(-1);pts.push({price:last.price,volume:g.reduce((a,b)=>a+b.volume,0),time:last.time});}
+  const W=900,H=330,padL=30,padR=12,padT=14,volH=78,gap=14,priceBottom=H-volH-gap;
+  let lo=Math.min(...pts.map(x=>x.price)),hi=Math.max(...pts.map(x=>x.price));const pr=hi-lo||Math.max(hi*.005,1);lo-=pr*.08;hi+=pr*.08;
+  const vmax=Math.max(...pts.map(x=>x.volume),1), x=i=>padL+i/Math.max(pts.length-1,1)*(W-padL-padR), y=v=>padT+(hi-v)/(hi-lo)*(priceBottom-padT);
+  let out='';
+  for(let k=0;k<4;k++){const yy=padT+k*(priceBottom-padT)/3;out+=`<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="#17334a" stroke-width="1"/>`;}
+  const bw=Math.max(1,(W-padL-padR)/pts.length*.65);
+  pts.forEach((p,i)=>{const h=p.volume/vmax*(volH-8);out+=`<rect x="${x(i)-bw/2}" y="${H-h}" width="${bw}" height="${h}" rx="1" fill="#315f82" opacity=".8"/>`;});
+  const path=pts.map((p,i)=>(i?'L':'M')+x(i).toFixed(1)+','+y(p.price).toFixed(1)).join(' ');
+  out+=`<path d="${path}" fill="none" stroke="#24dcff" stroke-width="2.6" vector-effect="non-scaling-stroke"/>`;
+  svg.innerHTML=out;
+  const last=data.at(-1),high=Math.max(...data.map(x=>x.price)),low=Math.min(...data.map(x=>x.price)),vol=data.reduce((a,b)=>a+b.volume,0);
+  setText('intraPrice',fmt(last.price));setText('intraTime',last.time||'最新一筆');setText('intraHighLow',fmt(high)+' / '+fmt(low));setText('intraVolume',Math.round(vol).toLocaleString());setText('intraCount',data.length.toLocaleString()+' 筆成交資料');
+}
+async function loadIntraday(id){
+  setText('intradayStatus','讀取盤中資料…');
+  try{
+    const today=new Date().toISOString().slice(0,10);
+    const rows=await getData('TaiwanStockPriceTick',id,today,today);
+    drawIntraday(rows);
+    const d=rows?.at(-1)?.date||today;setText('intradayStatus','盤中資料 '+d);
+  }catch(e){
+    drawIntraday([]);setText('intradayStatus','盤中資料暫時無法取得');
+  }
+}
+
 async function loadStock(id){
   const raw=String(id||'').trim();
   id=await normalizeStockInput(raw);
@@ -1008,6 +1079,8 @@ async function loadStock(id){
     setText('sumCompany', id+'｜'+stockName);
     const analyzed=analyze(price);
     window.__currentPrice=analyzed?.cur;
+    window.__currentStockId=id;
+    loadIntraday(id);
     renderForecast(price);
     // 基本面資料：失敗不影響技術分析。
     await updateFundamentals(id,end);
@@ -1044,6 +1117,7 @@ async function loadStock(id){
   }finally{document.body.classList.remove('loading')}
 }
 $('go').onclick=()=>loadStock($('stock').value);
+const intradayRefresh=$('intradayRefresh');if(intradayRefresh)intradayRefresh.onclick=()=>{if(window.__currentStockId)loadIntraday(window.__currentStockId)};
 $('stock').addEventListener('keydown',e=>{if(e.key==='Enter')loadStock($('stock').value)});
 document.querySelectorAll('.chip[data-stock]').forEach(b=>b.onclick=()=>{$('stock').value=b.dataset.stock;loadStock(b.dataset.stock)});
 loadStockDirectory();
